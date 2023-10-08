@@ -10,9 +10,9 @@ function LoginScreen({ navigation }) {
     const isCorrect = number === '1234567890' && name === 'John' && surname === 'Doe';
 
     if (isCorrect) {
-      navigation.navigate('MainPage'); 
+      navigation.navigate('IDIdentification'); 
     } else {
-      alert('Incorrect credentials. Please try againnnnn.');
+      alert('Ju lutem kontrolloni edhe nje here te dhenat e shenuara!.');
     }
   };
 
