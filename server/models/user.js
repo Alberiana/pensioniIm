@@ -1,6 +1,6 @@
 // models/User.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Assuming you have a file for database connection setup
+const sequelize = require('../utils/database'); // Assuming you have a file for database connection setup
 
 const User = sequelize.define('retirees', {
     id: {

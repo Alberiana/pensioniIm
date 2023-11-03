@@ -1,9 +1,8 @@
+const { Sequelize } = require('sequelize'); // Use require instead of import
 
-import { Sequelize } from 'sequelize';
-
-const sequelize = new Sequelize('loginDB', 'root', 'YOUR_PASSWORD', {
+const sequelize = new Sequelize('retirees', 'root', 'lqsym', {
     dialect: 'mysql',
     host: 'localhost', 
 });
 
-export default sequelize;
+module.exports = sequelize; // Use module.exports to export the sequelize instance

@@ -1,7 +1,8 @@
 const express = require('express');
-const sequelize = require('./utils/database.js'); // Check the import path
-
+const Sequelize = require('sequelize');
+const sequelize = require('./utils/database.js'); // Import the sequelize instance
 const router = require('./routes/routes.js');
+const User = require('./models/user'); // Import the User model
 
 const app = express();
 
@@ -17,12 +18,6 @@ app.use((_, res, next) => {
 
 app.use(router);
 
-const sequelize = new Sequelize('mobileAppDatabaseExammple', 'root', 'lqsym', {
-  host: 'localhost',
-  dialect: 'mysql',
-});
-
-const User = require('./models/user'); // Import the User model
 
 sequelize.sync({ alter: true }) // Sync the models with the database
   .then(() => {
@@ -32,8 +27,7 @@ sequelize.sync({ alter: true }) // Sync the models with the database
       console.error('An error occurred during synchronization:', err);
   });
 
-
-// Check if sequelize is properly imported and defined
+// Ensure you use the existing sequelize instance for further operations
 sequelize.authenticate()
   .then(() => {
     console.log('Connection to the database has been established successfully.');

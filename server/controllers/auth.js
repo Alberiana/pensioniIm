@@ -24,8 +24,8 @@ const User = require('../models/user.js');
 //         res.status(500).json({ message: "Error while creating the user" });
 //     }
 // };
-const faceRecognition = require('your-face-recognition-library');
-const User = require('../models/user'); // Assuming you have a User model
+const faceRecognition = require('face-recognition-library'); // Replace with the correct library name
+
 
 const signup = (req, res) => {
   const { idCard, name, surname, faceImage } = req.body;
