@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const IDIdentificationScreen = () => {
+const IDIdentificationScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
@@ -21,11 +21,31 @@ const IDIdentificationScreen = () => {
         : Camera.Constants.Type.back
     );
   };
-
   const handleCapture = async () => {
     if (cameraRef.current) {
       let photo = await cameraRef.current.takePictureAsync();
-      // 'photo' will contain the captured image data, you can process it further here.
+
+      // 'photo' contains the captured image data
+      const base64ImageData = photo.base64; // Access the base64 image data
+
+      try {
+        const response = await fetch('http://your-server-address/recognize-faces', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imageData: base64ImageData }),
+        });
+
+        if (response.ok) {
+          navigation.navigate('NextScreen'); // Navigate to the next screen upon successful face capture
+        } else {
+          alert('Failed to save face data. Please try again.');
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred. Please try again.');
+      }
     }
   };
 

@@ -1,39 +1,46 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet,TouchableOpacity } from 'react-native';
 
 function LoginScreen({ navigation }) {
-  const [number, setNumber] = useState('');
-  const [name, setName] = useState('');
-  const [surname, setSurname] = useState('');
+  const [idCard, setIdCard] = useState('');
 
-  const checkCredentials = () => {
-    const isCorrect = number === '1234567890' && name === 'John' && surname === 'Doe';
-    if (isCorrect) {
-      navigation.navigate('IDIdentification'); 
-    } else {
-      alert('Ju lutem kontrolloni edhe nje here te dhenat e shenuara!.');
+  const checkCredentials = async () => {
+    try {
+      const response = await fetch('login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idCard }), // Send the ID card to the server for validation
+      });
+
+      if (response.ok) {
+        // Successfully authenticated
+        navigation.navigate('IDIdentification'); // Navigate to the next screen upon successful authentication
+      } else {
+        alert('ID card number is incorrect or not found in the database.'); // Show an error message
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.'); // Show an error message if something went wrong
     }
+  };
+  const handleSignUp = () => {
+    navigation.navigate('SignUp'); // Navigate to the sign-up screen
   };
 
   return (
     <View style={styles.container}>
-      <Text>Enter your information:</Text>
+      <Text>Enter your ID card number:</Text>
       <TextInput
-        placeholder="10-digit number"
-        onChangeText={text => setNumber(text)}
-        value={number}
+        placeholder="ID card number"
+        onChangeText={text => setIdCard(text)}
+        value={idCard}
       />
-      <TextInput
-        placeholder="Name"
-        onChangeText={text => setName(text)}
-        value={name}
-      />
-      <TextInput
-        placeholder="Surname"
-        onChangeText={text => setSurname(text)}
-        value={surname}
-      />
-      <Button title="Submit" onPress={checkCredentials} style={StyleSheet.buttonContainer} />
+      <Button title="Submit" onPress={checkCredentials} />
+      <TouchableOpacity onPress={handleSignUp}>
+        <Text style={styles.signUpText}>Don't have an account? Sign up</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -43,14 +50,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20, 
-    backgroundColor:'lightblue'
+    padding: 20,
+    backgroundColor: 'lightblue',
   },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 10, 
-    left: 0,
-    right: 0,
+  signUpText: {
+    marginVertical: 20,
+    color: 'blue',
   },
 });
+
 export default LoginScreen;

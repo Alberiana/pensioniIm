@@ -1,54 +1,27 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.js');
-
-// const signup = async (req, res, next) => {
-//     try {
-//         const dbUser = await User.findOne({ where: { email: req.body.email } });
-//         if (dbUser) {
-//             return res.status(409).json({ message: "Email already exists" });
-//         } else if (req.body.email && req.body.password) {
-//             const passwordHash = await bcrypt.hash(req.body.password, 12);
-//             const createdUser = await User.create({
-//                 email: req.body.email,
-//                 name: req.body.name,
-//                 password: passwordHash,
-//             });
-//             console.log('User created:', createdUser);
-//             res.status(200).json({ message: "User created" });
-//         } else {
-//             return res.status(400).json({ message: "Invalid email or password provided" });
-//         }
-//     } catch (err) {
-//         console.error('Error creating user:', err);
-//         res.status(500).json({ message: "Error while creating the user" });
-//     }
-// };
-const faceRecognition = require('face-recognition-library'); // Replace with the correct library name
+const faceRecognition = require('face-api.js');
 
 
-const signup = (req, res) => {
+
+const signup =  async (req, res)=> {
   const { idCard, name, surname, faceImage } = req.body;
 
   // Check if all required fields are provided
   if (!idCard || !name || !surname || !faceImage) {
     return res.status(400).json({ error: 'Please provide all required information' });
   }
+  const detection = await faceapi.detectSingleFace(faceImage);
 
-  // Validate ID card, name, and surname (you may want to add more validation)
-  // Example: Check if the ID card format is correct, etc.
-
-  // Perform face recognition
-  if (faceRecognition.verify(faceImage)) {
+  if (detection) {
     // If face recognition is successful, proceed with user signup
     const newUser = new User({
       idCard,
       name,
       surname,
-      // Other user properties...
     });
 
-    // Save the user to the database
     newUser.save((err, user) => {
       if (err) {
         return res.status(500).json({ error: 'Failed to create user' });
@@ -60,7 +33,8 @@ const signup = (req, res) => {
   }
 };
 
-module.exports = { signup, login, isAuth };
+
+
 const login = async (req, res, next) => {
     try {
         const dbUser = await User.findOne({ where: { email: req.body.email } });

@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize'); // Use require instead of import
 
-const sequelize = new Sequelize('retirees', 'root', 'lqsym', {
+const sequelize = new Sequelize('pensioniIm', 'root', 'lqsym', {
     dialect: 'mysql',
     host: 'localhost', 
 });

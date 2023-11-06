@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import WelcomeScreen from './screens/welcomeScreen';
 import TermsScreen from './screens/termsScreen';
 import LoginScreen from './screens/loginScreen';
+import SignUpScreen from './screens/SignUpScreen';
 import IDIdentificationScreen from './screens/idIdentification';
 import { name as IDIdentificationScreenName } from './app.json';
 AppRegistry.registerComponent(IDIdentificationScreenName, () => App);
@@ -19,6 +20,7 @@ function App() {
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Terms" component={TermsScreen} />
         <Stack.Screen name="Login" component={LoginScreen} /> 
+        <Stack.Screen name="SignUp" component={SignUpScreen} /> 
         <Stack.Screen name="IDIdentificationnn" component={IDIdentificationScreen} /> 
 
       </Stack.Navigator>
