@@ -14,12 +14,15 @@ const signup =  async (req, res)=> {
   }
   const detection = await faceapi.detectSingleFace(faceImage);
 
+  try{
+    
   if (detection) {
     // If face recognition is successful, proceed with user signup
     const newUser = new User({
       idCard,
       name,
       surname,
+      faceImage:faceImage,
     });
 
     newUser.save((err, user) => {
@@ -31,6 +34,10 @@ const signup =  async (req, res)=> {
   } else {
     res.status(401).json({ error: 'Face recognition failed' });
   }
+} catch (error) {
+  console.error('Error during signup:', error);
+  res.status(500).json({ message: 'Error during signup process' });
+}
 };
 
 

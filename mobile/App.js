@@ -21,11 +21,11 @@ function App() {
         <Stack.Screen name="Terms" component={TermsScreen} />
         <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="SignUp" component={SignUpScreen} /> 
-        <Stack.Screen name="IDIdentificationnn" component={IDIdentificationScreen} /> 
-
+        <Stack.Screen name="IDIdentificationScreen" component={IDIdentificationScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
 
 export default App;

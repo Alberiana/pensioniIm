@@ -29,7 +29,7 @@ const IDIdentificationScreen = ({ navigation }) => {
       const base64ImageData = photo.base64; // Access the base64 image data
 
       try {
-        const response = await fetch('http://your-server-address/recognize-faces', {
+        const response = await fetch('http://localhost:6000/signup', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ const IDIdentificationScreen = ({ navigation }) => {
         ref={cameraRef}
         style={styles.camera}
         type={type}
-        ratio="16:9"
+        ratio="20:9"
         autoFocus="on"
       >
         <View style={styles.buttonContainer}>
