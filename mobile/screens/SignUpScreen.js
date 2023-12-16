@@ -7,31 +7,31 @@ function SignUpScreen({ navigation }) {
   const [surname, setSurname] = useState('');
 
   const navigateToFaceIDScreen = () => {
-    if (idCard && name && surname) {
+   // if (idCard && name && surname) {
       navigation.navigate('IDIdentificationScreen');
-    } else {
+   // } else {
       alert('Please fill in all the details.');
-    }
+//}
   };
 
   return (
     <View style={styles.container}>
       <Text>Sign Up</Text>
-      <TextInput
+      {/* <TextInput
         placeholder="ID card number"
         onChangeText={text => setIdCard(text)}
         value={idCard}
-      />
-      <TextInput
+      /> */}
+      {/* <TextInput
         placeholder="Name"
         onChangeText={text => setName(text)}
         value={name}
-      />
-      <TextInput
+      /> */}
+      {/* <TextInput
         placeholder="Surname"
         onChangeText={text => setSurname(text)}
         value={surname}
-      />
+      /> */}
       <Button title="Go to Face ID" onPress={navigateToFaceIDScreen} />
     </View>
   );

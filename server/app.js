@@ -1,84 +1,43 @@
+// const fetch = require('node-fetch'); // Remove this line
 const express = require('express');
-const Sequelize = require('sequelize');
-const sequelize = require('./utils/database.js'); // Import the sequelize instance
-const router = require('./routes/routes.js');
-const User = require('./models/user'); // Import the User model
+const bodyParser = require('body-parser');
 
 const app = express();
+const PORT = process.env.PORT || 8081;
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.use((_, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
-
-app.use(router);
-
-// Your other required modules and server setup
-// ...
-
-// Your function to perform face recognition from image data
-async function recognizeFacesFromImageData(imageData) {
-  // Your face recognition code here
-  // ...
-}
-
-app.post('/recognize-faces', async (req, res) => {
+app.post('/process-image', async (req, res) => {
   try {
-    const { imageData } = req.body; // Assuming image data is sent in the request body
+    const { imageData } = req.body;
 
-    // Perform face recognition with the received image data
-    // Replace this with your face recognition logic (using the imageData)
+    const apiKey = 'T2lagfFOEqwzwTkI3xbAdyC2uNu90jBa';
+    const apiEndpoint = 'https://api-eu.idanalyzer.com';
+    
+    // Use dynamic import for node-fetch
+    const { default: fetch } = await import('node-fetch');
 
-    // Example: After face recognition, you get recognizedUserData (replace this with your actual data)
-    const recognizedUserData = {
-      userId: 1,
-      username: 'TestUser',
-      // Other relevant recognized user data
-    };
-
-    // Save recognized user data to the MySQL database using Sequelize
-    const User = require('./models/user'); // Replace with your user model
-
-    const newUser = await User.create({
-      userId: recognizedUserData.userId,
-      username: recognizedUserData.username,
-      // Map other recognized user data to your user model fields
+    const response = await fetch(apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': apiKey,
+      },
+      body: JSON.stringify({
+        file_base64: imageData, 
+      }),
     });
 
-    res.json({ success: true, data: recognizedUserData });
+    const result = await response.json();
+
+    console.log('ID Analyzer API Response:', result);
+    res.json(result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Face recognition process failed' });
+    console.error('Error processing image:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-sequelize.sync({ alter: true }) // Sync the models with the database
-  .then(() => {
-      console.log('All models were synchronized successfully.');
-  })
-  .catch((err) => {
-      console.error('An error occurred during synchronization:', err);
-  });
-
-// Ensure you use the existing sequelize instance for further operations
-sequelize.authenticate()
-  .then(() => {
-    console.log('Connection to the database has been established successfully.');
-    return sequelize.sync();
-  })
-  .then(() => {
-    console.log('Models synced with the database.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
-
-const PORT = 6000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -8,6 +8,9 @@ import LoginScreen from './screens/loginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import IDIdentificationScreen from './screens/idIdentification';
 import { name as IDIdentificationScreenName } from './app.json';
+import license from './License'; // Import the license
+
+
 AppRegistry.registerComponent(IDIdentificationScreenName, () => App);
 
 const Stack = createStackNavigator();

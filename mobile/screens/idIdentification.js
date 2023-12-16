@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 
 const IDIdentificationScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -14,38 +15,53 @@ const IDIdentificationScreen = ({ navigation }) => {
     })();
   }, []);
 
-  const handleFlipCamera = () => {
-    setType(
-      type === Camera.Constants.Type.back
-        ? Camera.Constants.Type.front
-        : Camera.Constants.Type.back
-    );
-  };
+  const handleFlipCamera = () => setType((prevType) =>
+    prevType === Camera.Constants.Type.back
+      ? Camera.Constants.Type.front
+      : Camera.Constants.Type.back
+  );
+
   const handleCapture = async () => {
-    if (cameraRef.current) {
+    if (cameraRef.current && !loading) {
       let photo = await cameraRef.current.takePictureAsync();
-
-      // 'photo' contains the captured image data
-      const base64ImageData = photo.base64; // Access the base64 image data
-
+      const base64ImageData = photo.base64;
+      setLoading(true);
       try {
-        const response = await fetch('http://localhost:6000/signup', {
+        const apiEndpoint = 'https://api-eu.idanalyzer.com';
+        const apiKey = 'E6gTlXNVbMZN2yQTzVoQXqPqCVNRSSem'; 
+        const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'apikey': apiKey,
           },
           body: JSON.stringify({ imageData: base64ImageData }),
         });
-
+      
+        const result = await response.json();
+      
         if (response.ok) {
-          navigation.navigate('NextScreen'); // Navigate to the next screen upon successful face capture
+          console.log('Successful response:', result);
+      
+          if (result && result.verification) {
+            alert('result or result.verification exists.');
+          } else if (result && result.error) {
+            console.error('API Error:', result.error);
+            alert(`API Error: ${result.error.message}`);
+          }else {
+            console.log('Result or result.verification:', result);
+            alert('result or result.verification does not exist.');
+          }
         } else {
-          alert('Failed to save face data. Please try again.');
+          console.error('API Error:', result);
+          alert('Failed to process image. Please check the console for more details.');
         }
       } catch (error) {
-        console.error(error);
-        alert('An error occurred. Please try again.');
+        console.error('Network Error:', error); // Log detailed network error information
+        alert('An error occurred. Please check the console for more details.');
       }
+      
+      setLoading(false);
     }
   };
 
@@ -74,8 +90,7 @@ const IDIdentificationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'column',
   },
   camera: {
     width: '100%',
@@ -96,6 +111,11 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 });
 

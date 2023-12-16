@@ -16,6 +16,7 @@ function LoginScreen({ navigation }) {
 
       if (response.ok) {
         // Successfully authenticated
+        alert('Helloo'+ response); 
         navigation.navigate('IDIdentification'); // Navigate to the next screen upon successful authentication
       } else {
         alert('ID card number is incorrect or not found in the database.'); // Show an error message
