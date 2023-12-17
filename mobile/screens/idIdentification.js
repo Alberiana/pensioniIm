@@ -27,8 +27,9 @@ const IDIdentificationScreen = ({ navigation }) => {
       const base64ImageData = photo.base64;
       setLoading(true);
       try {
-        const apiEndpoint = 'https://api-eu.idanalyzer.com';
-        const apiKey = 'E6gTlXNVbMZN2yQTzVoQXqPqCVNRSSem'; 
+        const apiEndpoint = 'http://192.168.59.102:8083/processImage';
+        const apiKey = 'kcivRPPC1aV9bBLzLI1OxnzcwCqDAepD';
+
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
@@ -37,27 +38,27 @@ const IDIdentificationScreen = ({ navigation }) => {
           },
           body: JSON.stringify({ imageData: base64ImageData }),
         });
-      
-        const result = await response.json();
+
+
+        console.log('Response:', response);
+
       
         if (response.ok) {
-          console.log('Successful response:', result);
-      
-          if (result && result.verification) {
-            alert('result or result.verification exists.');
-          } else if (result && result.error) {
+          const result = await response.json();
+          if (result && result.error) {
             console.error('API Error:', result.error);
             alert(`API Error: ${result.error.message}`);
-          }else {
-            console.log('Result or result.verification:', result);
-            alert('result or result.verification does not exist.');
+          } else {
+            // Handle the result as needed
+            if (result && result.verification) {
+              alert('Verification successful.');
+            } else {
+              console.log('Result or result.verification does not exist.');
+            }
           }
-        } else {
-          console.error('API Error:', result);
-          alert('Failed to process image. Please check the console for more details.');
         }
       } catch (error) {
-        console.error('Network Error:', error); // Log detailed network error information
+        console.error('Network Error:', error);
         alert('An error occurred. Please check the console for more details.');
       }
       
@@ -79,7 +80,7 @@ const IDIdentificationScreen = ({ navigation }) => {
             <Text style={styles.text}>Kthe kameren</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handleCapture}>
-            <Text style={styles.text}>Capture</Text>
+            <Text style={styles.text}>{loading ? 'Processing...' : 'Capture'}</Text>
           </TouchableOpacity>
         </View>
       </Camera>
@@ -118,5 +119,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
 export default IDIdentificationScreen;
