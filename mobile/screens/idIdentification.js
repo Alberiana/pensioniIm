@@ -9,11 +9,16 @@ const IDIdentificationScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setCameraPermission(status === 'granted');
-    })();
-  }, []);
+    const requestCameraPermission = async () => {
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        setCameraPermission(status === 'granted');
+      } catch (error) {
+        console.error('Error requesting camera permission:', error);
+      }
+    };
+  requestCameraPermission();
+},[]);
 
   const handleFlipCamera = () => setType((prevType) =>
     prevType === Camera.Constants.Type.back
@@ -24,19 +29,27 @@ const IDIdentificationScreen = ({ navigation }) => {
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
       let photo = await cameraRef.current.takePictureAsync();
-      const base64ImageData = photo.base64;
+      const uri = photo.uri;
+  
+      const formData = new FormData();
+      formData.append('image', {
+        uri,
+        type: 'image/jpeg',
+        name: 'photo.jpg',
+      });
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.59.102:8083/processImage';
-        const apiKey = 'kcivRPPC1aV9bBLzLI1OxnzcwCqDAepD';
+        const apiEndpoint = 'http://192.168.178.69:8083/processImage';
+        const apiKey = 'TJGZSKRXUfWdLyNzkCDzzq7nSa8EhstV';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': apiKey,
+          headers: {     
+             'Authorization': `Bearer ${apiKey}`,
+             'Content-Type': 'multipart/form-data', 
           },
-          body: JSON.stringify({ imageData: base64ImageData }),
+          body: formData,
+          timeout: 30000,
         });
 
 
@@ -58,11 +71,11 @@ const IDIdentificationScreen = ({ navigation }) => {
           }
         }
       } catch (error) {
-        console.error('Network Error:', error);
-        alert('An error occurred. Please check the console for more details.');
+        console.error('Error capturing image:', error);
+         alert(`API Error: ${error.message}`);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     }
   };
 
