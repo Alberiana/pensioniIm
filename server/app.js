@@ -28,9 +28,9 @@ app.post('/processImage',upload.single('image'), async (req, res) => {
       apikey: apiKey,
     });
 
-    console.log('Response:', response);
+    console.log('Response data:', response.data);
 
-    const result = response.data;
+    const result = response.data.result;
     res.json(result);
   } catch (error) {
     console.error('Error processing image:', error.message);

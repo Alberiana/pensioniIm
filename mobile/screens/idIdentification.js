@@ -2,11 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
 
+
 const IDIdentificationScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [userData, setUserData]= useState(null);
+  const [documentRecognized, setDocumentRecognized] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -37,42 +41,48 @@ const IDIdentificationScreen = ({ navigation }) => {
         type: 'image/jpeg',
         name: 'photo.jpg',
       });
+
+      formData.append('return_confidence', true); // Enable confidence scores
+      formData.append('aml_check', true); // Enable AML check
+      formData.append('aml_database', 'us_ofac'); // Specify AML database
+      
       setLoading(true);
       try {
         const apiEndpoint = 'http://192.168.178.69:8083/processImage';
         const apiKey = 'TJGZSKRXUfWdLyNzkCDzzq7nSa8EhstV';
-
+        // Add other parameters
+       
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {     
-             'Authorization': `Bearer ${apiKey}`,
+             Authorization: `Bearer ${apiKey}`,
              'Content-Type': 'multipart/form-data', 
           },
           body: formData,
           timeout: 30000,
         });
 
+        const responseBody = await response.text(); // Store the response text
 
-        console.log('Response:', response);
-
-      
+        console.log('Response from server:', responseBody);
         if (response.ok) {
-          const result = await response.json();
-          if (result && result.error) {
-            console.error('API Error:', result.error);
-            alert(`API Error: ${result.error.message}`);
+          
+          const result = JSON.parse(responseBody);  
+          console.log('Result:', result);
+          const { firstName, lastName } = result;
+  
+          if (result.error) {
+            console.error('Document not recognized:', result.error.message);
+            setError('Document not recognized. Please try again.');
           } else {
-            // Handle the result as needed
-            if (result && result.verification) {
-              alert('Verification successful.');
-            } else {
-              console.log('Result or result.verification does not exist.');
-            }
+            console.log('Document recognized successfully!');
+            setUserData({ firstName, lastName });
+            setDocumentRecognized(true);
           }
         }
       } catch (error) {
         console.error('Error capturing image:', error);
-         alert(`API Error: ${error.message}`);
+        setError('Error capturing image. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -80,23 +90,28 @@ const IDIdentificationScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        type={type}
-        ratio="20:9"
-        autoFocus="on"
-      >
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleFlipCamera}>
-            <Text style={styles.text}>Kthe kameren</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleCapture}>
-            <Text style={styles.text}>{loading ? 'Processing...' : 'Capture'}</Text>
-          </TouchableOpacity>
+    <View>
+      {documentRecognized ? (
+        // Existing navigation logic when document is recognized
+        // This could be replaced with your desired navigation logic
+        <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
+      ) : (
+        <View>
+          <Camera
+            ref={cameraRef}
+            style={{ width: '100%', height: '80%' }}
+            type={type}
+            ratio="20:9"
+            autoFocus="on"
+          >
+            {/* Your existing camera UI */}
+          </Camera>
+
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+         <Button title="Capture" onPress={handleCapture}/>
         </View>
-      </Camera>
+      )}
     </View>
   );
 };
