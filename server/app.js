@@ -20,8 +20,9 @@ app.post('/processImage',upload.single('image'), async (req, res) => {
     if(!file){
       throw new Error('No file uploaded');
     }
-    const apiKey = 'Rnr6WWhzM2GdKJ8MntkiYxI5H6UtsaXh'; 
+    const apiKey = 't6YvBAXaEJXTVEZ4MH5yi167nPmcCwG0'; 
     const apiEndpoint = 'https://api-eu.idanalyzer.com'; 
+    res.send('Image processed successfully!');
 
     const response = await axios.post(apiEndpoint, {
       file_base64: file.buffer.toString('base64'),

@@ -7,11 +7,16 @@ import TermsScreen from './screens/termsScreen';
 import LoginScreen from './screens/loginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import IDIdentificationScreen from './screens/idIdentification';
+import BackIDCaptureScreen from './screens/backIdIdentification';
+
 import { name as IDIdentificationScreenName } from './app.json';
+import { name as BaclIDIdentificationScreenName } from './app.json';
+
 import license from './License'; // Import the license
 
 
 AppRegistry.registerComponent(IDIdentificationScreenName, () => App);
+AppRegistry.registerComponent(BaclIDIdentificationScreenName, () => App);
 
 const Stack = createStackNavigator();
 
@@ -25,6 +30,7 @@ function App() {
         <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="SignUp" component={SignUpScreen} /> 
         <Stack.Screen name="IDIdentificationScreen" component={IDIdentificationScreen} /> 
+        <Stack.Screen name="BackIDCaptureScreen" component={IDIdentificationScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

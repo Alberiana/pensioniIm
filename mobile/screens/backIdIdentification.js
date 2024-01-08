@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
-import BackIDCaptureScreen from './backIdIdentification';
 
-const IDIdentificationScreen = ({ navigation }) => {
+const BackIDCaptureScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
@@ -24,12 +23,11 @@ const IDIdentificationScreen = ({ navigation }) => {
     requestCameraPermission();
   }, []);
 
-  const handleFlipCamera = () =>
-    setType((prevType) =>
-      prevType === Camera.Constants.Type.back
-        ? Camera.Constants.Type.front
-        : Camera.Constants.Type.back
-    );
+  const handleFlipCamera = () => setType((prevType) =>
+    prevType === Camera.Constants.Type.back
+      ? Camera.Constants.Type.front
+      : Camera.Constants.Type.back
+  );
 
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
@@ -43,14 +41,15 @@ const IDIdentificationScreen = ({ navigation }) => {
         name: 'photo.jpg',
       });
 
-      formData.append('return_confidence', true);
-      formData.append('aml_check', true);
-      formData.append('aml_database', 'us_ofac');
+      formData.append('return_confidence', true); // Enable confidence scores
+      formData.append('aml_check', true); // Enable AML check
+      formData.append('aml_database', 'us_ofac'); // Specify AML database
 
       setLoading(true);
       try {
         const apiEndpoint = 'http:///192.168.2.102:8083/processImage';
         const apiKey = 'GURgXMvymLexWkLjVKABIVRqLK4iYv1J';
+        // Add other parameters
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -62,10 +61,11 @@ const IDIdentificationScreen = ({ navigation }) => {
           timeout: 10000,
         });
 
-        const responseBody = await response.text();
+        const responseBody = await response.text(); // Store the response text
 
         console.log('Response from server:', responseBody);
         if (response.ok) {
+
           const result = JSON.parse(responseBody);
           console.log('Result:', result);
           const { firstName, lastName } = result;
@@ -74,9 +74,17 @@ const IDIdentificationScreen = ({ navigation }) => {
             console.error('Document not recognized:', result.error.message);
             setError('Document not recognized. Please try again.');
           } else {
-            console.log('Document recognized successfully!');
+            console.log('Back of the document recognized successfully!');
             setUserData({ firstName, lastName });
             setDocumentRecognized(true);
+
+            await fetch('http://localhost:3000/saveUserData', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ firstName, lastName }),
+              });
           }
         }
       } catch (error) {
@@ -88,31 +96,27 @@ const IDIdentificationScreen = ({ navigation }) => {
     }
   };
 
-  const back = () => {
-    navigation.navigate('BackIDCaptureScreen');
-  };
-
   return (
-    <View>
+    <View style={styles.container}>
       {documentRecognized ? (
-        <View>
-          <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
-          <Button title="Go to Back ID Scanner" onPress={back} />
-        </View>
+        <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
       ) : (
-        <View>
+        <View style={styles.container}>
           <Camera
             ref={cameraRef}
-            style={{ width: '100%', height: '80%' }}
+            style={styles.camera}
             type={type}
             ratio="20:9"
             autoFocus="on"
           >
+            {/* Your existing camera UI */}
           </Camera>
 
           {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
-          <Button title="Capture" onPress={handleCapture} />
+          <View style={styles.buttonContainer}>
+            <Button title="Capture" onPress={handleCapture} />
+          </View>
         </View>
       )}
     </View>
@@ -136,19 +140,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  button: {
-    backgroundColor: 'blue',
-    padding: 10,
-    marginHorizontal: 10,
-  },
-  text: {
-    color: 'white',
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
 });
 
-export default IDIdentificationScreen;
+export default BackIDCaptureScreen;
