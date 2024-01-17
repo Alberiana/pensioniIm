@@ -8,7 +8,7 @@ import LoginScreen from './screens/loginScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import IDIdentificationScreen from './screens/idIdentification';
 import BackIDCaptureScreen from './screens/backIdIdentification';
-
+import FaceCaptureScreen from './screens/faceCaptureScreen';
 import { name as IDIdentificationScreenName } from './app.json';
 import { name as BaclIDIdentificationScreenName } from './app.json';
 
@@ -30,7 +30,8 @@ function App() {
         <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="SignUp" component={SignUpScreen} /> 
         <Stack.Screen name="IDIdentificationScreen" component={IDIdentificationScreen} /> 
-        <Stack.Screen name="BackIDCaptureScreen" component={IDIdentificationScreen} /> 
+        <Stack.Screen name="BackIDCaptureScreen" component={BackIDCaptureScreen} /> 
+        <Stack.Screen name="FaceCaptureScreen" component={FaceCaptureScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const IDIdentificationScreen = ({ navigation }) => {
+const FaceCaptureScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [type, setType] = useState(Camera.Constants.Type.front); 
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
-  const [documentRecognized, setDocumentRecognized] = useState(false);
+  const [verificationResult, setVerificationResult] = useState(null);
   const [error, setError] = useState(null);
+  const [welcomeMessage, setWelcomeMessage] = useState('');
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -23,12 +23,11 @@ const IDIdentificationScreen = ({ navigation }) => {
     requestCameraPermission();
   }, []);
 
-  const handleFlipCamera = () =>
-    setType((prevType) =>
-      prevType === Camera.Constants.Type.back
-        ? Camera.Constants.Type.front
-        : Camera.Constants.Type.back
-    );
+  const handleFlipCamera = () => setType((prevType) =>
+    prevType === Camera.Constants.Type.front
+      ? Camera.Constants.Type.back
+      : Camera.Constants.Type.front
+  );
 
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
@@ -36,13 +35,14 @@ const IDIdentificationScreen = ({ navigation }) => {
       const uri = photo.uri;
 
       const formData = new FormData();
-      formData.append('image', {
+      formData.append('face', {
         uri,
         type: 'image/jpeg',
-        name: 'photo.jpg',
+        name: 'face.jpg',
       });
 
-      formData.append('return_confidence', true);
+      formData.append('biometric_threshold', 0.6); 
+      formData.append('return_confidence', true); 
       formData.append('aml_check', true);
       formData.append('aml_database', 'us_ofac');
       formData.append('dualsidecheck', 'true');
@@ -52,8 +52,10 @@ const IDIdentificationScreen = ({ navigation }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http:///10.180.41.182:8083/processImage';
+        const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
+
         const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
+
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
@@ -66,20 +68,21 @@ const IDIdentificationScreen = ({ navigation }) => {
 
         const responseBody = await response.text();
 
-        console.log('Response from server:', responseBody);
+        console.log('Response from server face verification:', responseBody);
         if (response.ok) {
           const result = JSON.parse(responseBody);
-          console.log('Result:', result);
-          const { firstName, lastName } = result;
+          console.log('Verification Result:', result);
 
-          if (result.error) {
-            console.error('Document not recognized:', result.error.message);
-            setError('Document not recognized. Please try again.');
+          if (result.isIdentical) {
+            console.log('Face recognition passed!');
+            setVerificationResult('Biometric verification passed!');
           } else {
-            console.log('Document recognized successfully!');
-            setUserData({ firstName, lastName });
-            setDocumentRecognized(true);
+            console.log('Face recognition failed.');
+            setError('Biometric verification failed. Please try again.');
           }
+        }else{
+            console.log('ERRORRRRR!');
+
         }
       } catch (error) {
         console.error('Error capturing image:', error);
@@ -90,31 +93,28 @@ const IDIdentificationScreen = ({ navigation }) => {
     }
   };
 
-  const back = () => {
-    navigation.navigate('BackIDCaptureScreen');
-  };
-
+   
   return (
-    <View>
-      {documentRecognized ? (
-        <View>
-          <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
-          <Button title="Go to Back ID Scanner" onPress={back} />
-        </View>
+    <View style={styles.container}>
+       {welcomeMessage ? (
+        <Text>{welcomeMessage}</Text>
       ) : (
-        <View>
+        <View style={styles.container}>
           <Camera
             ref={cameraRef}
-            style={{ width: '100%', height: '80%' }}
+            style={styles.camera}
             type={type}
             ratio="20:9"
             autoFocus="on"
           >
+            {}
           </Camera>
 
           {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
-          <Button title="Capture" onPress={handleCapture} />
+          <View>
+            <Button title="Capture" onPress={handleCapture} />
+          </View>
         </View>
       )}
     </View>
@@ -138,19 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  button: {
-    backgroundColor: 'blue',
-    padding: 10,
-    marginHorizontal: 10,
-  },
-  text: {
-    color: 'white',
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
 });
 
-export default IDIdentificationScreen;
+export default FaceCaptureScreen;

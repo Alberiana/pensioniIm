@@ -41,15 +41,18 @@ const BackIDCaptureScreen = ({ navigation }) => {
         name: 'photo.jpg',
       });
 
-      formData.append('return_confidence', true); // Enable confidence scores
-      formData.append('aml_check', true); // Enable AML check
-      formData.append('aml_database', 'us_ofac'); // Specify AML database
+      formData.append('return_confidence', true); 
+      formData.append('aml_check', true);
+      formData.append('aml_database', 'us_ofac');
+      formData.append('dualsidecheck', 'true');
+      formData.append('return_confidence', 'true');
+      formData.append('authenticate', 'true');
+      formData.append('verify_expiry', 'true');
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http:///192.168.2.102:8083/processImage';
-        const apiKey = 'GURgXMvymLexWkLjVKABIVRqLK4iYv1J';
-        // Add other parameters
+        const apiEndpoint = 'http:///10.180.41.182:8083/processImage';
+        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -63,11 +66,11 @@ const BackIDCaptureScreen = ({ navigation }) => {
 
         const responseBody = await response.text(); // Store the response text
 
-        console.log('Response from server:', responseBody);
+        console.log('Response from server back id:', responseBody);
         if (response.ok) {
 
           const result = JSON.parse(responseBody);
-          console.log('Result:', result);
+          console.log('Result back id:', result);
           const { firstName, lastName } = result;
 
           if (result.error) {
@@ -77,15 +80,8 @@ const BackIDCaptureScreen = ({ navigation }) => {
             console.log('Back of the document recognized successfully!');
             setUserData({ firstName, lastName });
             setDocumentRecognized(true);
-
-            await fetch('http://localhost:3000/saveUserData', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ firstName, lastName }),
-              });
           }
+          
         }
       } catch (error) {
         console.error('Error capturing image:', error);
@@ -96,26 +92,30 @@ const BackIDCaptureScreen = ({ navigation }) => {
     }
   };
 
+  const faceCapture=()=>{
+    navigation.navigate('FaceCaptureScreen');
+  };
   return (
-    <View style={styles.container}>
+    <View>
       {documentRecognized ? (
-        <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
+        <View>
+          <Button title="Face Capture" onPress={faceCapture}/>
+        </View>
       ) : (
-        <View style={styles.container}>
+        <View>
           <Camera
             ref={cameraRef}
-            style={styles.camera}
+            style={{ width: '100%', height: '80%' }}
             type={type}
             ratio="20:9"
             autoFocus="on"
           >
-            {/* Your existing camera UI */}
           </Camera>
 
           {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
           <View style={styles.buttonContainer}>
-            <Button title="Capture" onPress={handleCapture} />
+            <Button title="Shkrep" onPress={handleCapture} />
           </View>
         </View>
       )}
