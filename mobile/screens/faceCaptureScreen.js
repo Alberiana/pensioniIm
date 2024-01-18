@@ -35,12 +35,32 @@ const FaceCaptureScreen = ({ navigation }) => {
       const uri = photo.uri;
 
       const formData = new FormData();
-      formData.append('face', {
-        uri,
-        type: 'image/jpeg',
-        name: 'face.jpg',
-      });
+      const convertImageToBase64 = async (uri) => {
+        try {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          const base64String = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const base64 = reader.result.split(',')[1];
+              resolve(base64);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(blob);
+          });
+          console.log('Base64 Image:', base64String); // Log the base64 string
+          return base64String;
+        } catch (error) {
+          console.error('Error converting image to Base64:', error);
+          throw error;
+        }
+      };
+      
+      
+      console.log('Base64 Image:', base64Image); // Log the base64 image data for debugging
 
+      const base64Image = await convertImageToBase64(uri); 
+      formData.append('face_base64', base64Image);
       formData.append('biometric_threshold', 0.6); 
       formData.append('return_confidence', true); 
       formData.append('aml_check', true);

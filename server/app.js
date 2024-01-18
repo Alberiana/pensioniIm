@@ -7,10 +7,6 @@ const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 8083;
-
-
-const port = 3000;
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 app.use(cors());
@@ -43,21 +39,20 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
 });
 
 
-app.post('/processImageFaceCapture', upload.single('face'), async (req, res) => {
+app.post('/processImageFaceCapture', async (req, res) => {
   try {
-    console.log('Request body:', req.body);
-    const file = req.file;
-    if (!file) {
-      throw new Error('No file uploaded');
+    const { face } = req.body;
+    if (!face) {
+      throw new Error('No face data found');
     }
 
     const idAnalyzerApiKey = 'cVkHBvh8Gj3cHEUdSLMl9ozjfRzoH8Qp';
 
-    const coreApiEndpoint = 'https://api-eu.idanalyzer.com/v1/core'; 
+    const coreApiEndpoint = 'https://api-eu.idanalyzer.com'; 
     
     const response = await axios.post(coreApiEndpoint, {
-      file: file.buffer.toString('base64'),
-      face: file.buffer.toString('base64'),  
+       file: face,
+       face: face,
       apikey: idAnalyzerApiKey,
     });
 
