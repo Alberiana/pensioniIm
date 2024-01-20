@@ -40,6 +40,8 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
 
 
 app.post('/processImageFaceCapture', async (req, res) => {
+  console.log('Request body:', req.body); // Log the request body
+
   try {
     const { face } = req.body;
     if (!face) {

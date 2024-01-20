@@ -35,21 +35,43 @@ const FaceCaptureScreen = ({ navigation }) => {
       const uri = photo.uri;
 
       const formData = new FormData();
+      formData.append('face', true);
+
       const convertImageToBase64 = async (uri) => {
         try {
-          const response = await fetch(uri);
-          const blob = await response.blob();
-          const base64String = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const base64 = reader.result.split(',')[1];
-              resolve(base64);
-            };
-            reader.onerror = (error) => reject(error);
-            reader.readAsDataURL(blob);
-          });
-          console.log('Base64 Image:', base64String); // Log the base64 string
-          return base64String;
+          const base64Image = await convertImageToBase64(uri);
+
+        const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
+        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
+
+        setLoading(true);
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json', // Set the content type to JSON
+          },
+          body: JSON.stringify({ face: base64Image }), // Send face data directly in the request body
+          timeout: 10000,
+        });
+
+        const responseBody = await response.text();
+
+        console.log('Response from server face verification:', responseBody);
+        if (response.ok) {
+          const result = JSON.parse(responseBody);
+          console.log('Verification Result:', result);
+
+          if (result.isIdentical) {
+            console.log('Face recognition passed!');
+            setVerificationResult('Biometric verification passed!');
+          } else {
+            console.log('Face recognition failed.');
+            setError('Biometric verification failed. Please try again.');
+          }
+        } else {
+          console.log('ERRORRRRR!');
+        }
         } catch (error) {
           console.error('Error converting image to Base64:', error);
           throw error;
