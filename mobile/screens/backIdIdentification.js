@@ -93,7 +93,7 @@ const BackIDCaptureScreen = ({ navigation }) => {
   };
 
   const faceCapture=()=>{
-    navigation.navigate('FaceCaptureScreen');
+    navigation.navigate('FaceCaptureScreen',{userData});
   };
   return (
     <View>

@@ -25,8 +25,8 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen name=" " component={WelcomeScreen} />
-        <Stack.Screen name="Kushtet" component={TermsScreen} />
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Terms" component={TermsScreen} />
         <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="SignUp" component={SignUpScreen} /> 
         <Stack.Screen name="IDIdentificationScreen" component={IDIdentificationScreen} /> 

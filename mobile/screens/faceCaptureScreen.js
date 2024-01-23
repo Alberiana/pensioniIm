@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const FaceCaptureScreen = ({ navigation }) => {
+const FaceCaptureScreen = ({ route }) => {
+  const {userData} = route.params;
+
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front); 
   const cameraRef = useRef(null);
@@ -35,53 +37,27 @@ const FaceCaptureScreen = ({ navigation }) => {
       const uri = photo.uri;
 
       const formData = new FormData();
-      formData.append('face', true);
 
       const convertImageToBase64 = async (uri) => {
         try {
-          const base64Image = await convertImageToBase64(uri);
-
-        const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
-        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
-
-        setLoading(true);
-        const response = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json', // Set the content type to JSON
-          },
-          body: JSON.stringify({ face: base64Image }), // Send face data directly in the request body
-          timeout: 10000,
-        });
-
-        const responseBody = await response.text();
-
-        console.log('Response from server face verification:', responseBody);
-        if (response.ok) {
-          const result = JSON.parse(responseBody);
-          console.log('Verification Result:', result);
-
-          if (result.isIdentical) {
-            console.log('Face recognition passed!');
-            setVerificationResult('Biometric verification passed!');
-          } else {
-            console.log('Face recognition failed.');
-            setError('Biometric verification failed. Please try again.');
-          }
-        } else {
-          console.log('ERRORRRRR!');
-        }
+          const response = await fetch(uri);
+          const blob = await response.blob();
+      
+          const reader = new FileReader();
+          return new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
         } catch (error) {
           console.error('Error converting image to Base64:', error);
           throw error;
         }
       };
       
-      
-      console.log('Base64 Image:', base64Image); // Log the base64 image data for debugging
-
       const base64Image = await convertImageToBase64(uri); 
+      //console.log('Base64 Image:', base64Image); // Log the base64 image data for debugging
+      formData.append('face', true);
       formData.append('face_base64', base64Image);
       formData.append('biometric_threshold', 0.6); 
       formData.append('return_confidence', true); 
@@ -91,7 +67,8 @@ const FaceCaptureScreen = ({ navigation }) => {
       formData.append('return_confidence', 'true');
       formData.append('authenticate', 'true');
       formData.append('verify_expiry', 'true');
-
+     // formData.append('documentNumber', userData.response.result.documentNumber)
+     // console.log('userData.response.result.documentNumber',userData.response.result.documentNumber);
       setLoading(true);
       try {
         const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
@@ -102,9 +79,9 @@ const FaceCaptureScreen = ({ navigation }) => {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           },
-          body: formData,
+          body: JSON.stringify({ face_base64: base64Image}),
           timeout: 10000,
         });
 
@@ -124,7 +101,6 @@ const FaceCaptureScreen = ({ navigation }) => {
           }
         }else{
             console.log('ERRORRRRR!');
-
         }
       } catch (error) {
         console.error('Error capturing image:', error);

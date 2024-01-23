@@ -43,8 +43,8 @@ app.post('/processImageFaceCapture', async (req, res) => {
   console.log('Request body:', req.body); // Log the request body
 
   try {
-    const { face } = req.body;
-    if (!face) {
+    const { face_base64  } = req.body;
+    if (!face_base64 ) {
       throw new Error('No face data found');
     }
 
@@ -53,8 +53,8 @@ app.post('/processImageFaceCapture', async (req, res) => {
     const coreApiEndpoint = 'https://api-eu.idanalyzer.com'; 
     
     const response = await axios.post(coreApiEndpoint, {
-       file: face,
-       face: face,
+       file: face_base64,
+       face: face_base64,
       apikey: idAnalyzerApiKey,
     });
 
