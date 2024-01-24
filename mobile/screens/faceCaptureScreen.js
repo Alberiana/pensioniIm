@@ -73,7 +73,7 @@ const FaceCaptureScreen = ({ route }) => {
       try {
         const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
 
-        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
+        const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -81,7 +81,7 @@ const FaceCaptureScreen = ({ route }) => {
             Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ face_base64: base64Image}),
+          body: formData,
           timeout: 10000,
         });
 

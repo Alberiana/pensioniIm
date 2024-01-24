@@ -52,7 +52,7 @@ const BackIDCaptureScreen = ({ navigation }) => {
       setLoading(true);
       try {
         const apiEndpoint = 'http:///10.180.41.182:8083/processImage';
-        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
+        const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',

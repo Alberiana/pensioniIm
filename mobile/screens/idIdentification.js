@@ -46,14 +46,14 @@ const IDIdentificationScreen = ({ navigation }) => {
       formData.append('aml_check', true);
       formData.append('aml_database', 'us_ofac');
       formData.append('dualsidecheck', 'true');
-      formData.append('return_confidence', 'true');
-      formData.append('authenticate', 'true');
+      formData.append('return_confidence', true);
+      formData.append('authentication', true);
       formData.append('verify_expiry', 'true');
 
       setLoading(true);
       try {
         const apiEndpoint = 'http:///10.180.41.182:8083/processImage';
-        const apiKey = 'FlzzLXDAApdNm5x4nOYqRTqFKanAEsKG';
+        const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {

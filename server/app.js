@@ -1,4 +1,3 @@
-// const fetch = require('node-fetch'); // Remove this line
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
@@ -13,15 +12,14 @@ app.use(cors());
 
 app.use(bodyParser.json());
 const apiEndpoint = 'https://api-eu.idanalyzer.com';
+const apiKey = 'CtSYxLYijCzQYYpMP01NueDCOVkjsLp9';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
     const file = req.file;
     if (!file) {
       throw new Error('No file uploaded');
-    }
-    const apiKey = 'cVkHBvh8Gj3cHEUdSLMl9ozjfRzoH8Qp';
-    
+    }    
     const response = await axios.post(apiEndpoint, {
       file_base64: file.buffer.toString('base64'),
       apikey: apiKey,
@@ -40,22 +38,18 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
 
 
 app.post('/processImageFaceCapture', async (req, res) => {
-  console.log('Request body:', req.body); // Log the request body
+  console.log('Request body:', req.body); 
 
   try {
     const { face_base64  } = req.body;
     if (!face_base64 ) {
       throw new Error('No face data found');
-    }
-
-    const idAnalyzerApiKey = 'cVkHBvh8Gj3cHEUdSLMl9ozjfRzoH8Qp';
-
-    const coreApiEndpoint = 'https://api-eu.idanalyzer.com'; 
+    }    
     
-    const response = await axios.post(coreApiEndpoint, {
+    const response = await axios.post(apiEndpoint, {
        file: face_base64,
        face: face_base64,
-      apikey: idAnalyzerApiKey,
+      apikey: apiKey,
     });
 
     console.log('Response data:', response.data);
