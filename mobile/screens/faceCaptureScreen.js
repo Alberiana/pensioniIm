@@ -56,32 +56,34 @@ const FaceCaptureScreen = ({ route }) => {
       };
       
       const base64Image = await convertImageToBase64(uri); 
-      //console.log('Base64 Image:', base64Image); // Log the base64 image data for debugging
-      formData.append('face', true);
-      formData.append('face_base64', base64Image);
+      const file = {
+        uri: photo.uri,
+        type: 'image/jpeg',
+        name: 'face.jpg',
+      };
+  
+      formData.append('face', file); 
       formData.append('biometric_threshold', 0.6); 
       formData.append('return_confidence', true); 
       formData.append('aml_check', true);
       formData.append('aml_database', 'us_ofac');
-      formData.append('dualsidecheck', 'true');
-      formData.append('return_confidence', 'true');
-      formData.append('authenticate', 'true');
-      formData.append('verify_expiry', 'true');
-     // formData.append('documentNumber', userData.response.result.documentNumber)
-     // console.log('userData.response.result.documentNumber',userData.response.result.documentNumber);
+      formData.append('dualsidecheck', true);
+      formData.append('return_confidence', true);
+      formData.append('authenticate', true);
+      formData.append('verify_expiry', true);
+      
       setLoading(true);
       try {
         const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
-
         const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
           },
-          body: formData,
+          body:  JSON.stringify({ file: base64Image }),
           timeout: 10000,
         });
 

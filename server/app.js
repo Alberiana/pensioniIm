@@ -41,14 +41,13 @@ app.post('/processImageFaceCapture', async (req, res) => {
   console.log('Request body:', req.body); 
 
   try {
-    const { face_base64  } = req.body;
-    if (!face_base64 ) {
+    const { file } = req;
+    if (!file) {
       throw new Error('No face data found');
-    }    
-    
+    } 
+
     const response = await axios.post(apiEndpoint, {
-       file: face_base64,
-       face: face_base64,
+      file: file.buffer.toString('base64'),
       apikey: apiKey,
     });
 
