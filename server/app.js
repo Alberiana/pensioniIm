@@ -23,9 +23,15 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
       throw new Error('No file uploaded');
     }    
     const response = await axios.post(apiEndpoint, {
-      file_base64: file.buffer.toString('base64'),
-      apikey: apiKey,
+      document: file.buffer.toString('base64'), // Assuming document is the key for the document image
+    }, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey,
+      },
     });
+    
 
     console.log('Response data:', response.data);
 
@@ -36,10 +42,18 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
     console.log('Response status:', response.status);
 
     res.json(result);
-  } catch (error) {
-    console.error('Error processing image:', error.message);
+    } catch (error) {
+      console.log('Request:', {
+        document: file.buffer.toString('base64'),
+        // Add other required parameters based on the API documentation
+      });
+      
+      console.log('Response data:', response.data);
+      console.log('Response headers:', response.headers);
+      console.log('Response status:', response.status);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
+  
 });
 
 

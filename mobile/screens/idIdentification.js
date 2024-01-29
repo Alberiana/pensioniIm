@@ -44,14 +44,14 @@ const IDIdentificationScreen = ({ navigation }) => {
       formData.append('return_confidence', true);
       formData.append('aml_check', true);
       formData.append('aml_database', 'us_ofac');
-      formData.append('dualsidecheck', 'true');
+      formData.append('dualsidecheck', true);
       formData.append('return_confidence', true);
       formData.append('authentication', true);
-      formData.append('verify_expiry', 'true');
+      formData.append('verify_expiry', true);
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.2.102:8083/processImage';
+        const apiEndpoint = 'http://10.180.32.159:8083/processImage';
         const apiKey = '9RFzA1DwdewRIscmeJzxpNZpFNh6Y7l2';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -68,10 +68,8 @@ const IDIdentificationScreen = ({ navigation }) => {
         console.log('Response from server:', responseBody);
 
          if (response.ok) {
-       // Process the response data
             console.log('Result:', responseBody);
           } else {
-          // Handle error response
              console.error('Error response from server:', responseBody);
         }
       } catch (error) {
