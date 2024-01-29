@@ -11,8 +11,10 @@ const upload = multer({ storage: storage });
 app.use(cors());
 
 app.use(bodyParser.json());
-const apiEndpoint = 'https://api-eu.idanalyzer.com';
-const apiKey = 'CtSYxLYijCzQYYpMP01NueDCOVkjsLp9';
+const apiEndpoint = 'https://api2.idanalyzer.com/scan';
+const apiEndpointFace = 'https://api2.idanalyzer.com/face';
+
+const apiKey = '2kzKbFbhX1vKaCJ7Z1sbQnvJnV5MCkDZ';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
@@ -28,6 +30,10 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
     console.log('Response data:', response.data);
 
     const result = response.data.result;
+    // Add the following lines after the axios.post() call in both endpoints
+
+    console.log('Response headers:', response.headers);
+    console.log('Response status:', response.status);
 
     res.json(result);
   } catch (error) {
@@ -46,7 +52,7 @@ app.post('/processImageFaceCapture', async (req, res) => {
       throw new Error('No face data found');
     } 
 
-    const response = await axios.post(apiEndpoint, {
+    const response = await axios.post(apiEndpointFace, {
       file: file.buffer.toString('base64'),
       apikey: apiKey,
     });

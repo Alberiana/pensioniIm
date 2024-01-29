@@ -41,7 +41,6 @@ const IDIdentificationScreen = ({ navigation }) => {
         type: 'image/jpeg',
         name: 'photo.jpg',
       });
-
       formData.append('return_confidence', true);
       formData.append('aml_check', true);
       formData.append('aml_database', 'us_ofac');
@@ -52,38 +51,32 @@ const IDIdentificationScreen = ({ navigation }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http:///10.180.41.182:8083/processImage';
-        const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
+        const apiEndpoint = 'http://192.168.2.102:8083/processImage';
+        const apiKey = '9RFzA1DwdewRIscmeJzxpNZpFNh6Y7l2';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'multipart/form-data',
-          },
+            'X-API-KEY': apiKey,
+          },          
           body: formData,
           timeout: 10000,
         });
 
-        const responseBody = await response.text();
+        const responseBody = await response.json();
 
         console.log('Response from server:', responseBody);
-        if (response.ok) {
-          const result = JSON.parse(responseBody);
-          console.log('Result:', result);
-          const { firstName, lastName } = result;
 
-          if (result.error) {
-            console.error('Document not recognized:', result.error.message);
-            setError('Document not recognized. Please try again.');
+         if (response.ok) {
+       // Process the response data
+            console.log('Result:', responseBody);
           } else {
-            console.log('Document recognized successfully!');
-            setUserData({ firstName, lastName });
-            setDocumentRecognized(true);
-          }
+          // Handle error response
+             console.error('Error response from server:', responseBody);
         }
       } catch (error) {
         console.error('Error capturing image:', error);
-        setError('Error capturing image. Please try again.');
+        setError(`Error capturing image: ${error.message}`);      
       } finally {
         setLoading(false);
       }

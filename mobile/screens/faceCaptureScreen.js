@@ -71,11 +71,11 @@ const FaceCaptureScreen = ({ route }) => {
       formData.append('return_confidence', true);
       formData.append('authenticate', true);
       formData.append('verify_expiry', true);
-      
+
       setLoading(true);
       try {
-        const apiEndpoint = 'http://10.180.41.182:8083/processImageFaceCapture';
-        const apiKey = 'f2ejuH3EFOTtcUsomByMFOW4gVYZVzmo';
+        const apiEndpoint = 'http://192.168.2.102:8083/processImageFaceCapture';
+        const apiKey = '9RFzA1DwdewRIscmeJzxpNZpFNh6Y7l2';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
