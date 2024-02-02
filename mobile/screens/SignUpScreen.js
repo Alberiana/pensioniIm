@@ -10,29 +10,13 @@ function SignUpScreen({ navigation }) {
    // if (idCard && name && surname) {
       navigation.navigate('IDIdentificationScreen');
    // } else {
-      alert('Please fill in all the details.');
+     // alert('Ju lutem plotesoni te gjitha fushat.');
 //}
   };
 
   return (
     <View style={styles.container}>
-      <Text>Sign Up</Text>
-      {/* <TextInput
-        placeholder="ID card number"
-        onChangeText={text => setIdCard(text)}
-        value={idCard}
-      /> */}
-      {/* <TextInput
-        placeholder="Name"
-        onChangeText={text => setName(text)}
-        value={name}
-      /> */}
-      {/* <TextInput
-        placeholder="Surname"
-        onChangeText={text => setSurname(text)}
-        value={surname}
-      /> */}
-      <Button title="Go to Face ID" onPress={navigateToFaceIDScreen} />
+      <Button title="Skano leternjoftimin" onPress={navigateToFaceIDScreen} />
     </View>
   );
 }

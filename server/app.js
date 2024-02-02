@@ -34,23 +34,23 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
     
 
     console.log('Response data:', response.data);
-
+    const age = response.data.data.age;
+    console.log('AGEEE::::   ',age);
     const result = response.data.result;
     // Add the following lines after the axios.post() call in both endpoints
 
-    console.log('Response headers:', response.headers);
-    console.log('Response status:', response.status);
+    console.log('Response statussss:', response.status);
 
     res.json(result);
     } catch (error) {
-      console.log('Request:', {
-        document: file.buffer.toString('base64'),
+      //console.log('Request:', {
+     //   document: file.buffer.toString('base64'),
         // Add other required parameters based on the API documentation
-      });
+     // });
       
-      console.log('Response data:', response.data);
-      console.log('Response headers:', response.headers);
-      console.log('Response status:', response.status);
+      //console.log('Response data:', response.data);
+      //console.log('Response headers:', response.headers);
+      //console.log('Response status:', response.status);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
   

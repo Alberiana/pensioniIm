@@ -1,4 +1,3 @@
-// WelcomeScreen.js
 import React from 'react';
 import { View, Text, Button, StyleSheet,Image } from 'react-native';
 
@@ -9,7 +8,7 @@ function WelcomeScreen({ navigation }) {
       <Image style={styles.image} source={require('../images/getMoney.jpg' )} />
       <View style={styles.buttonContainer}>
         <Button style={styles.button}
-          title="Vazhdoooo"
+          title="Vazhdo"
           onPress={() => navigation.navigate('Terms')}
         />
       </View>
@@ -40,13 +39,10 @@ const styles = StyleSheet.create({
     borderRadius:20,
   },
   image:{
-    width: 200, // Set the width as needed
-    height: 200, // Set the height as needed
-    marginVertical: 10, // Adjust margin as needed
+    width: 200, 
+    height: 200,
+    marginVertical: 10, 
   },
-  // button:{
-  //   color:'#662121',
-  // },
 });
 
 export default WelcomeScreen;

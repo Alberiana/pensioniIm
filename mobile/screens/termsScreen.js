@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, Button, StyleSheet } from 'react-native';
+import { View, Text, Switch, Button, StyleSheet,TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 function TermsScreen({ navigation }) {
@@ -12,25 +12,26 @@ function TermsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Termat dhe Kushtet</Text>
-      {/* Add your terms and conditions text here */}
+      <Text>{'Te dhenat tuaja do te perdoren per perdorim te brendshem.'}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Switch
           value={isAccepted}
           onValueChange={handleAcceptance}
         />
-        <Text>I accept the terms and conditions</Text>
+        <Text>Une i pranoj Termat dhe Kushtet</Text>
       </View>
-      <Button
-        title="Vazhdo"
-        onPress={() => {
-            if (isAccepted) {
-              navigation.navigate('Login'); // Use the name of the screen/component you defined in your Stack.Navigator
-            } else {
-              alert('Vetem nese pranoni kushtet ju und te vazhdonime tutje!!');
-            }
-          }}
-          
+      <View>
+      <Button style={styles.buttonContainer}
+      onPress={() => {
+        if (isAccepted) {
+          navigation.navigate('Login'); // Use the name of the screen/component you defined in your Stack.Navigator
+        } else {
+          alert('Vetem nese pranoni kushtet ju mund te vazhdoni me tutje!!');
+        }
+      }}
+      title="Vazhdoooo"
       />
+    </View>
     </View>
   );
 }
@@ -48,6 +49,10 @@ const styles = StyleSheet.create({
     bottom: 10, 
     left: 0,
     right: 0,
+    backgroundColor:'#962121',
+    marginTop:93,
+    top:56,
+
   },
 });
 

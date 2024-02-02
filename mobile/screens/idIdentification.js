@@ -51,7 +51,7 @@ const IDIdentificationScreen = ({ navigation }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://10.180.32.159:8083/processImage';
+        const apiEndpoint = 'http://10.180.38.1:8083/processImage';
         const apiKey = '9RFzA1DwdewRIscmeJzxpNZpFNh6Y7l2';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -66,7 +66,9 @@ const IDIdentificationScreen = ({ navigation }) => {
         const responseBody = await response.json();
 
         console.log('Response from server:', responseBody);
-
+        const age = response.data.data.age;
+        console.log('AGEEE::::   ',age);
+        
          if (response.ok) {
             console.log('Result:', responseBody);
           } else {

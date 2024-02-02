@@ -11,36 +11,35 @@ function LoginScreen({ navigation }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ idCard }), // Send the ID card to the server for validation
+        body: JSON.stringify({ idCard }), 
       });
 
-      if (response.ok) {
-        // Successfully authenticated
-        alert('Helloo'+ response); 
-        navigation.navigate('IDIdentification'); // Navigate to the next screen upon successful authentication
-      } else {
-        alert('ID card number is incorrect or not found in the database.'); // Show an error message
-      }
+      // if (response.ok) {
+      //   alert('Helloo'+ response); 
+      //   navigation.navigate('IDIdentification'); 
+      // } else {
+      //   alert('ID card number is incorrect or not found in the database.'); 
+      // }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred. Please try again.'); // Show an error message if something went wrong
+      alert('An error occurred. Please try again.'); 
     }
   };
   const handleSignUp = () => {
-    navigation.navigate('SignUp'); // Navigate to the sign-up screen
+    navigation.navigate('SignUp'); 
   };
 
   return (
     <View style={styles.container}>
-      <Text>Enter your ID card number:</Text>
+      <Text>Sheno numrin e leternjoftimit:</Text>
       <TextInput
-        placeholder="ID card number"
+        placeholder="Numri leternjoftimit"
         onChangeText={text => setIdCard(text)}
         value={idCard}
       />
-      <Button title="Submit" onPress={checkCredentials} />
+      <Button title="Vazhdo" onPress={checkCredentials} />
       <TouchableOpacity onPress={handleSignUp}>
-        <Text style={styles.signUpText}>Don't have an account? Sign up</Text>
+        <Text style={styles.signUpText}>Nuk jeni i/e regjistruar? Regjistrohu</Text>
       </TouchableOpacity>
     </View>
   );
