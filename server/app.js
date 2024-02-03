@@ -32,30 +32,36 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
       },
     });
     
+    const formattedData = extractData(response.data.data);
 
-    console.log('Response data:', response.data);
-    const age = response.data.data.age;
-    console.log('AGEEE::::   ',age);
-    const result = response.data.result;
-    // Add the following lines after the axios.post() call in both endpoints
+    console.log('Original Response data:', response.data);
+   const result={
+    ...response.data.result,
+    data:formattedData,
+   };
+    
+    console.log('Formatted Response data:', result);
 
     console.log('Response statussss:', response.status);
-
     res.json(result);
     } catch (error) {
-      //console.log('Request:', {
-     //   document: file.buffer.toString('base64'),
-        // Add other required parameters based on the API documentation
-     // });
-      
-      //console.log('Response data:', response.data);
-      //console.log('Response headers:', response.headers);
-      //console.log('Response status:', response.status);
     res.status(500).json({ error: `Internal Server Error: ${error.message}` });
   }
   
 });
 
+
+function extractData(data){
+  const formattedData={};
+  Object.keys(data).forEach(key=>{
+    if(Array.isArray(data[key])&& data[key].length===1 && typeof data[key][0]==='object'){
+      formattedData[key]=data[key][0].value;
+    }else{
+      formattedData[key]=data[key];
+    }
+  });
+  return formattedData;
+}
 
 app.post('/processImageFaceCapture', async (req, res) => {
   console.log('Request body:', req.body); 

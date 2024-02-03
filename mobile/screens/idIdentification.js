@@ -63,17 +63,21 @@ const IDIdentificationScreen = ({ navigation }) => {
           timeout: 10000,
         });
 
-        const responseBody = await response.json();
+        const responseBody = await response.text();
 
-        console.log('Response from server:', responseBody);
-        const age = response.data.data.age;
-        console.log('AGEEE::::   ',age);
-        
-         if (response.ok) {
-            console.log('Result:', responseBody);
+        try {
+          const parsedResponse = JSON.parse(responseBody);      
+          if (response.ok) {
+            console.log('Result:', parsedResponse);
           } else {
-             console.error('Error response from server:', responseBody);
+            console.error('Error response from server:', parsedResponse);
+          }
+        } catch (parseError) {
+          console.error('Error parsing JSON:', parseError);
         }
+
+        navigation.navigate('BackIDCaptureScreen');
+
       } catch (error) {
         console.error('Error capturing image:', error);
         setError(`Error capturing image: ${error.message}`);      
