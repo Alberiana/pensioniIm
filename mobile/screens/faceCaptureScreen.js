@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const FaceCaptureScreen = ({ route }) => {
+const FaceCaptureScreen = ({navigation, route }) => {
   const {userData} = route.params;
-
+  const{documentImage, documentBackImage}=route.params;
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front); 
   const cameraRef = useRef(null);
@@ -63,6 +63,9 @@ const FaceCaptureScreen = ({ route }) => {
       };
   
       formData.append('face', file); 
+      formData.append('documentImage', documentImage);
+       // Append documentBackImage to formData
+      formData.append('documentBackImage', documentBackImage);
       formData.append('biometric_threshold', 0.6); 
       formData.append('return_confidence', true); 
       formData.append('aml_check', true);
@@ -83,7 +86,7 @@ const FaceCaptureScreen = ({ route }) => {
             Authorization: `Bearer ${apiKey}`,
             'Content-Type': 'multipart/form-data',
           },
-          body:  JSON.stringify({ file: base64Image }),
+          body: formData,
           timeout: 10000,
         });
 

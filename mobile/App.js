@@ -12,7 +12,6 @@ import FaceCaptureScreen from './screens/faceCaptureScreen';
 import { name as IDIdentificationScreenName } from './app.json';
 import { name as BaclIDIdentificationScreenName } from './app.json';
 
-import license from './License'; // Import the license
 
 
 AppRegistry.registerComponent(IDIdentificationScreenName, () => App);

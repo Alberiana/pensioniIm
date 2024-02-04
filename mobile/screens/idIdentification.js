@@ -76,7 +76,9 @@ const IDIdentificationScreen = ({ navigation }) => {
           console.error('Error parsing JSON:', parseError);
         }
 
-        navigation.navigate('BackIDCaptureScreen');
+        navigation.navigate('BackIDCaptureScreen',{
+          documentImage:uri,
+        });
 
       } catch (error) {
         console.error('Error capturing image:', error);

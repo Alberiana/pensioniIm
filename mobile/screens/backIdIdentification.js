@@ -83,6 +83,12 @@ const BackIDCaptureScreen = ({ navigation }) => {
           }
           
         }
+
+
+        navigation.navigate('FaceCaptureScreen',{
+          documentBackImage:uri,
+        });
+        
       } catch (error) {
         console.error('Error capturing image:', error);
         setError('Error capturing image. Please try again.');
