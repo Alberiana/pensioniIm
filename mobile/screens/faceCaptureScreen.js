@@ -3,10 +3,11 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
 const FaceCaptureScreen = ({navigation, route }) => {
-  const {userData} = route.params;
-  const{documentImage, documentBackImage}=route.params;
+  const { userData } = route.params;
+  const { documentBackImage } = route.params;
+  const { documentImage } = route.params;
   const [cameraPermission, setCameraPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.front); 
+  const [type, setType] = useState(Camera.Constants.Type.front);
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
@@ -33,27 +34,15 @@ const FaceCaptureScreen = ({navigation, route }) => {
 
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
-      let photo = await cameraRef.current.takePictureAsync();
-      const uri = photo.uri;
-
-      const formData = new FormData();
-
-      const convertImageToBase64 = async (uri) => {
-        try {
-          const response = await fetch(uri);
-          const blob = await response.blob();
-      
-          const reader = new FileReader();
-          return new Promise((resolve, reject) => {
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-        } catch (error) {
-          console.error('Error converting image to Base64:', error);
-          throw error;
-        }
-      };
+      try {
+        let photo = await cameraRef.current.takePictureAsync();
+        console.log('Photo captured:', photo);
+        // Rest of the code for handling capture...
+      } catch (error) {
+        console.error('Error capturing photo:', error);
+        setError('Error capturing photo. Please try again.');
+      }
+    }
       
       const base64Image = await convertImageToBase64(uri); 
       const file = {
@@ -117,25 +106,23 @@ const FaceCaptureScreen = ({navigation, route }) => {
   };
 
    
-  return (
+ return (
     <View style={styles.container}>
-       {welcomeMessage ? (
-        <Text>{welcomeMessage}</Text>
+      {cameraPermission === null ? (
+        <Text>Requesting camera permission...</Text>
+      ) : cameraPermission === false ? (
+        <Text>No access to camera</Text>
       ) : (
         <View style={styles.container}>
           <Camera
             ref={cameraRef}
             style={styles.camera}
             type={type}
-            ratio="20:9"
+            ratio="16:9"
             autoFocus="on"
-          >
-            {}
-          </Camera>
-
+          />
           {error && <Text style={{ color: 'red' }}>{error}</Text>}
-
-          <View>
+          <View style={styles.buttonContainer}>
             <Button title="Capture" onPress={handleCapture} />
           </View>
         </View>
@@ -150,8 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   camera: {
-    width: '100%',
-    height: '80%',
+    flex: 1,
   },
   buttonContainer: {
     position: 'absolute',
@@ -162,5 +148,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
 export default FaceCaptureScreen;

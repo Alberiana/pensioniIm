@@ -81,14 +81,15 @@ const BackIDCaptureScreen = ({ navigation }) => {
             setUserData({ firstName, lastName });
             setDocumentRecognized(true);
           }
-          
+          console.log('Before navigating to FaceCaptureScreen');
+          navigation.navigate('FaceCaptureScreen', {
+            documentBackImage: uri,
+          });
+          console.log('After navigating to FaceCaptureScreen');
         }
-
-
-        navigation.navigate('FaceCaptureScreen',{
-          documentBackImage:uri,
-        });
         
+        
+
       } catch (error) {
         console.error('Error capturing image:', error);
         setError('Error capturing image. Please try again.');
@@ -97,47 +98,31 @@ const BackIDCaptureScreen = ({ navigation }) => {
       }
     }
   };
-
-  const faceCapture=()=>{
-    navigation.navigate('FaceCaptureScreen',{userData});
-  };
   return (
-    <View>
-      {documentRecognized ? (
-        <View>
-          <Button title="Face Capture" onPress={faceCapture}/>
-        </View>
+    <View style={{ flex: 1 }}>
+      {cameraPermission === null ? (
+        <Text>Requesting camera permission...</Text>
+      ) : cameraPermission === false ? (
+        <Text>No access to camera</Text>
       ) : (
-        <View>
+        <View style={{ flex: 1 }}>
           <Camera
             ref={cameraRef}
-            style={{ width: '100%', height: '80%' }}
+            style={{ flex: 1 }}
             type={type}
-            ratio="20:9"
+            ratio="16:9"
             autoFocus="on"
-          >
-          </Camera>
-
-          {error && <Text style={{ color: 'red' }}>{error}</Text>}
-
+          />
           <View style={styles.buttonContainer}>
-            <Button title="Shkrep" onPress={handleCapture} />
+            <Button title="Capture" onPress={handleCapture} />
           </View>
         </View>
       )}
     </View>
-  );
+  );  
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  camera: {
-    width: '100%',
-    height: '80%',
-  },
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
