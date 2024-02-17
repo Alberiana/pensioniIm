@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Camera } from 'expo-camera';
+import { useNavigation } from '@react-navigation/native';
 
-const IDIdentificationScreen = ({ navigation }) => {
+const IDIdentificationScreen = ({ navigation  }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
@@ -51,8 +52,8 @@ const IDIdentificationScreen = ({ navigation }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://10.180.38.1:8083/processImage';
-        const apiKey = '9RFzA1DwdewRIscmeJzxpNZpFNh6Y7l2';
+        const apiEndpoint = 'http://192.168.178.69:8083/processImage';
+        const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
@@ -76,8 +77,8 @@ const IDIdentificationScreen = ({ navigation }) => {
           console.error('Error parsing JSON:', parseError);
         }
 
-        navigation.navigate('BackIDCaptureScreen',{
-          documentImage:uri,
+        navigation.navigate('BackIDCaptureScreen', {
+          documentImage: uri,
         });
 
       } catch (error) {

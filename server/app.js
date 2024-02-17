@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const apiEndpoint = 'https://api2.idanalyzer.com/scan';
 const apiEndpointFace = 'https://api2.idanalyzer.com/face';
 
-const apiKey = '2kzKbFbhX1vKaCJ7Z1sbQnvJnV5MCkDZ';
+const apiKey = 'rfEa3UP1yxmXrf6J90t9wxGVQ4sZy7OK';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
