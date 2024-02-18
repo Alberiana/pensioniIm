@@ -6,8 +6,8 @@ const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 8083;
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+//const storage = multer.memoryStorage();
+const upload = multer();
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -63,6 +63,70 @@ function extractData(data){
   return formattedData;
 }
 
+
+
+app.post('/faceVerification', upload.fields([
+  { name: 'document', maxCount: 1 },
+  { name: 'documentBack', maxCount: 1 },
+  { name: 'face', maxCount: 1 },
+]), (req, res) => {
+
+  if (!req.files )
+  {  
+    console.error('REQ file missing in the request.');
+    return res.status(400).send('Bad Request: Req file missing.');
+
+  }else if(!req.files['document']){
+
+   console.error('DOCUMENT missing in the request.');
+   return res.status(400).send('Bad Request: DOCUMENT missing.');
+
+  }else if(!req.files['documentBack'] ){
+    console.error('documentBack missing in the request.');
+    return res.status(400).send('Bad Request:documentBack missing.');
+  }else if(!req.files['face']) {
+    console.error('face files missing in the request.');
+    return res.status(400).send('Bad Request: face files missing.');
+  }
+
+  const documentImage = req.files['document'][0];
+  const documentBackImage = req.files['documentBack'][0];
+  const faceImage = req.files['face'][0];
+
+  // Convert images to base64-encoded strings
+  const documentBase64 = documentImage.buffer.toString('base64');
+  const documentBackBase64 = documentBackImage.buffer.toString('base64');
+  const faceBase64 = faceImage.buffer.toString('base64');
+
+  // Prepare data for API request
+  const data = {
+    document: documentBase64,
+    documentBack: documentBackBase64,
+    face: faceBase64,
+    // Add other required parameters as needed
+}
+fetch('https://api2.idanalyzer.com/scan', {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-API-KEY': apiKey,
+  },
+  body: JSON.stringify(data),
+})
+.then(response => response.json())
+.then(apiResponse => {
+  // Handle API response here
+  // Check for warnings and take appropriate actions based on the thresholds provided
+  console.log(apiResponse);
+  res.send(apiResponse); // Send API response back to client
+})
+.catch(error => {
+  console.error(error);
+  res.status(500).send('Internal Server Error'); // Handle API request error
+});
+
+});
 app.post('/processImageFaceCapture', async (req, res) => {
   console.log('Request body:', req.body); 
 

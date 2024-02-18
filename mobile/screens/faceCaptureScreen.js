@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const FaceCaptureScreen  = (navigation, route ) => {
+const FaceCaptureScreen  = ({ navigation, route }) => {
   const { userData, documentImage, documentBackImage } = route.params || {};
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front);
@@ -32,24 +32,40 @@ const FaceCaptureScreen  = (navigation, route ) => {
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
       let photo = await cameraRef.current.takePictureAsync();
+
+      console.log('documentImage:', documentImage);
+      console.log('documentBackImage:', documentBackImage);
+      if (!photo || !photo.uri) {
+        console.error('Error capturing photo:', photo);
+        setError('Error capturing photo. Please try again.');
+        return;
+      }
       const uri = photo.uri;
 
       const formData = new FormData();
       formData.append('face', {
-      uri: photo.uri,
-      type: 'image/jpeg',
-      name: 'face.jpg',
-    });
+        uri: photo.uri,
+        type: 'image/jpeg',
+        name: 'face.jpg',
+      });
+      formData.append('document', {
+        uri: documentImage.uri,
+        type: 'image/jpeg',
+        name: 'document.jpg',
+      });
 
-      formData.append('document', documentImage); // Use 'document' instead of 'documentImage'
-      formData.append('documentBack', documentBackImage); // Use 'documentBack' instead of 'documentBackImage'
-  
-      formData.append('profile', 'security_high'); // Example profile, use your custom or preset profile ID
+      formData.append('documentBack', {
+        uri: documentBackImage.uri,
+        type: 'image/jpeg',
+        name: 'documentBack.jpg',
+      });
+      
+      formData.append('profile', 'security_high');
   
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.178.69:8083/processImage';
+        const apiEndpoint = 'http://192.168.178.69:8083/faceVerification';
         const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
 
         const response = await fetch(apiEndpoint, {
@@ -63,8 +79,7 @@ const FaceCaptureScreen  = (navigation, route ) => {
         });
 
         const responseBody = await response.text(); // Store the response text
-
-          console.log('Response from server face verification:', responseBody);        
+        console.log('Response from server face verification:', responseBody);        
           if (response.ok) {
             const result = JSON.parse(responseBody);
             console.log('Verification Result:', result);

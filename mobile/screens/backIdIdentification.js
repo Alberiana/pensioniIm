@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-const BackIDCaptureScreen = ({ navigation, route}) => {
+const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
-  const { documentImage, documentBackImage } = route.params;
+  const { userData, documentImage, documentBackImage } = route.params || {};
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -79,15 +78,15 @@ const BackIDCaptureScreen = ({ navigation, route}) => {
             setError('Document not recognized. Please try again.');
           } else {
             console.log('Back of the document recognized successfully!');
-            setUserData({ firstName, lastName });
             setDocumentRecognized(true);
           }
           console.log('Before navigating to FaceCaptureScreen');
           navigation.navigate('FaceCaptureScreen', {
-            userData: userData,
-            documentImage: documentImage,
-            documentBackImage: documentBackImage,
+            userData,
+            documentImage,
+            documentBackImage,
           });
+          
           
           console.log('After navigating to FaceCaptureScreen');
         }
