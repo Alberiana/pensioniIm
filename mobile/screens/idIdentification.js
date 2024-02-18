@@ -78,6 +78,7 @@ const IDIdentificationScreen = ({ navigation  }) => {
         }
 
         navigation.navigate('BackIDCaptureScreen', {
+          userData: userData,
           documentImage: uri,
         });
 

@@ -2,22 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 
-// Define the convertImageToBase64 function if not already defined
-const convertImageToBase64 = async (uri) => {
-  // Implementation of the function
-};
-
-const FaceCaptureScreen = ({ navigation, route }) => {
-  const { userData } = route.params;
-  const { documentImage } = route.params; // For front image
-  const { documentBackImage } = route.params; // For back image
+const FaceCaptureScreen  = (navigation, route ) => {
+  const { userData, documentImage, documentBackImage } = route.params || {};
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front);
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [verificationResult, setVerificationResult] = useState(null);
+  const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
-  const [welcomeMessage, setWelcomeMessage] = useState('');
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -31,59 +23,48 @@ const FaceCaptureScreen = ({ navigation, route }) => {
     requestCameraPermission();
   }, []);
 
-  const handleFlipCamera = () =>
-    setType((prevType) =>
-      prevType === Camera.Constants.Type.front
-        ? Camera.Constants.Type.back
-        : Camera.Constants.Type.front
-    );
+  const handleFlipCamera = () => setType((prevType) =>
+    prevType === Camera.Constants.Type.back
+      ? Camera.Constants.Type.front
+      : Camera.Constants.Type.back
+  );
 
   const handleCapture = async () => {
     if (cameraRef.current && !loading) {
       let photo = await cameraRef.current.takePictureAsync();
       const uri = photo.uri;
-       console.log('Photo captured:', photo);
-        // Create formData
-        const formData = new FormData();
-        const file = {
-          uri: photo.uri,
-          type: 'image/jpeg',
-          name: 'face.jpg',
-        };
 
-        // Append data to formData
-        formData.append('face', file);
-        formData.append('documentImage', documentImage);
-        formData.append('documentBackImage', documentBackImage);
-        formData.append('biometric_threshold', 0.6);
-        formData.append('return_confidence', true);
-        formData.append('aml_check', true);
-        formData.append('aml_database', 'us_ofac');
-        formData.append('dualsidecheck', true);
-        formData.append('return_confidence', true);
-        formData.append('authenticate', true);
-        formData.append('verify_expiry', true);
+      const formData = new FormData();
+      formData.append('face', {
+      uri: photo.uri,
+      type: 'image/jpeg',
+      name: 'face.jpg',
+    });
 
-        setLoading(true);
-        try {
-           
+      formData.append('document', documentImage); // Use 'document' instead of 'documentImage'
+      formData.append('documentBack', documentBackImage); // Use 'documentBack' instead of 'documentBackImage'
+  
+      formData.append('profile', 'security_high'); // Example profile, use your custom or preset profile ID
+  
 
-          const apiEndpoint = 'http://192.168.178.69:8083/processImage';
-          const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
+      setLoading(true);
+      try {
+        const apiEndpoint = 'http://192.168.178.69:8083/processImage';
+        const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
 
-          const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-              'Content-Type': 'multipart/form-data',
-            },
-            body: formData,
-            timeout: 10000,
-          });
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'multipart/form-data',
+          },
+          body: formData,
+          timeout: 10000,
+        });
 
-          const responseBody = await response.text();
+        const responseBody = await response.text(); // Store the response text
 
-          console.log('Response from server face verification:', responseBody);
+          console.log('Response from server face verification:', responseBody);        
           if (response.ok) {
             const result = JSON.parse(responseBody);
             console.log('Verification Result:', result);
@@ -95,55 +76,42 @@ const FaceCaptureScreen = ({ navigation, route }) => {
               console.log('Face recognition failed.');
               setError('Biometric verification failed. Please try again.');
             }
-          } else {
-            console.log('ERRORRRRR!');
-          }
-        } catch (error) {
-          console.error('Error capturing image:', error);
-          setError('Error capturing image. Please try again.');
-        } finally {
-          setLoading(false);
+        }else {
+          console.log('Its not OK!');
         }
-    }else {
-      console.log('Camera is not running');
-      setError('Camera is not running. Please make sure the camera is ready.');
+      } catch (error) {
+        console.error('Error capturing image:', error);
+        setError('Error capturing image. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
-
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       {cameraPermission === null ? (
         <Text>Requesting camera permission...</Text>
       ) : cameraPermission === false ? (
         <Text>No access to camera</Text>
       ) : (
-        <View style={styles.container}>
+        <View style={{ flex: 1 }}>
           <Camera
             ref={cameraRef}
-            style={styles.camera}
+            style={{ flex: 1 }}
             type={type}
             ratio="16:9"
             autoFocus="on"
-            onCameraReady={() => console.log('Camera is ready')}
-            />
-            {error && <Text style={{ color: 'red' }}>{error}</Text>}
-            <View style={styles.buttonContainer}>
-              <Button title="Capture" onPress={handleCapture} />
-            </View>
+          />
+          <View style={styles.buttonContainer}>
+            <Button title="Capture" onPress={handleCapture} />
+          </View>
         </View>
       )}
     </View>
-  );
+  );  
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  camera: {
-    flex: 1,
-  },
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
