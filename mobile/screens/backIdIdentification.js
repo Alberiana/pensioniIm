@@ -9,7 +9,7 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
   const [loading, setLoading] = useState(false);
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
-  const { userData, documentImage, documentBackImage } = route.params || {};
+  const { userData, documentImage } = route.params || {};
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -82,9 +82,9 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
           }
           console.log('Before navigating to FaceCaptureScreen');
           navigation.navigate('FaceCaptureScreen', {
-            userData,
-            documentImage,
-            documentBackImage,
+            userData: userData,
+            documentImage: documentImage,
+            documentBackImage:uri,
           });
           
           

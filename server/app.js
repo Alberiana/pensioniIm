@@ -93,17 +93,18 @@ app.post('/faceVerification', upload.fields([
   const documentBackImage = req.files['documentBack'][0];
   const faceImage = req.files['face'][0];
 
-  // Convert images to base64-encoded strings
+  console.error('documentImage: ',documentImage);
+
   const documentBase64 = documentImage.buffer.toString('base64');
+  console.error('documentBase64: ',documentBase64);
+
   const documentBackBase64 = documentBackImage.buffer.toString('base64');
   const faceBase64 = faceImage.buffer.toString('base64');
 
-  // Prepare data for API request
   const data = {
     document: documentBase64,
     documentBack: documentBackBase64,
     face: faceBase64,
-    // Add other required parameters as needed
 }
 fetch('https://api2.idanalyzer.com/scan', {
   method: 'POST',
@@ -116,10 +117,8 @@ fetch('https://api2.idanalyzer.com/scan', {
 })
 .then(response => response.json())
 .then(apiResponse => {
-  // Handle API response here
-  // Check for warnings and take appropriate actions based on the thresholds provided
   console.log(apiResponse);
-  res.send(apiResponse); // Send API response back to client
+  res.send(apiResponse); 
 })
 .catch(error => {
   console.error(error);
@@ -127,6 +126,9 @@ fetch('https://api2.idanalyzer.com/scan', {
 });
 
 });
+
+
+
 app.post('/processImageFaceCapture', async (req, res) => {
   console.log('Request body:', req.body); 
 

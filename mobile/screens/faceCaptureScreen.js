@@ -35,12 +35,13 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
 
       console.log('documentImage:', documentImage);
       console.log('documentBackImage:', documentBackImage);
+      console.log('Photo uri:', photo.uri);
+
       if (!photo || !photo.uri) {
         console.error('Error capturing photo:', photo);
         setError('Error capturing photo. Please try again.');
         return;
       }
-      const uri = photo.uri;
 
       const formData = new FormData();
       formData.append('face', {
@@ -48,17 +49,13 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         type: 'image/jpeg',
         name: 'face.jpg',
       });
-      formData.append('document', {
-        uri: documentImage.uri,
-        type: 'image/jpeg',
-        name: 'document.jpg',
-      });
-
-      formData.append('documentBack', {
-        uri: documentBackImage.uri,
-        type: 'image/jpeg',
-        name: 'documentBack.jpg',
-      });
+      const documentBlob = await fetch(documentImage.uri)
+      .then((res) => res.blob());
+      formData.append( 'document',  documentBlob,  'document.jpg');
+  
+      const documentBackBlob = await fetch(documentBackImage.uri)
+      .then((res) => res.blob());
+      formData.append('documentBack', documentBackBlob, 'documentBack.jpg');
       
       formData.append('profile', 'security_high');
   
@@ -78,7 +75,7 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
           timeout: 10000,
         });
 
-        const responseBody = await response.text(); // Store the response text
+        const responseBody = await response.text(); 
         console.log('Response from server face verification:', responseBody);        
           if (response.ok) {
             const result = JSON.parse(responseBody);
