@@ -69,8 +69,8 @@ app.post('/faceVerification', upload.fields([
   { name: 'document', maxCount: 1 },
   { name: 'documentBack', maxCount: 1 },
   { name: 'face', maxCount: 1 },
-]), (req, res) => {
-
+]),async (req, res) => {
+try{
   if (!req.files )
   {  
     console.error('REQ file missing in the request.');
@@ -89,24 +89,37 @@ app.post('/faceVerification', upload.fields([
     return res.status(400).send('Bad Request: face files missing.');
   }
 
-  const documentImage = req.files['document'][0];
-  const documentBackImage = req.files['documentBack'][0];
-  const faceImage = req.files['face'][0];
+  const{document, documentBack,face}=req.files;
+  if(!document || !documentBack || !face){
+    console.error('Required files missing in the request. ');
+    return res.status(400).send('Bad Request: Required files missing. ');
+  }
 
+
+  // const documentImage = req.files['document'][0];
+  // const documentBackImage = req.files['documentBack'][0];
+  // const faceImage = req.files['face'][0];
+
+  
   console.error('documentImage: ',documentImage);
 
-  const documentBase64 = documentImage.buffer.toString('base64');
+  const documentBase64 = document[0].buffer.toString('base64');
   console.error('documentBase64: ',documentBase64);
 
-  const documentBackBase64 = documentBackImage.buffer.toString('base64');
-  const faceBase64 = faceImage.buffer.toString('base64');
+  const documentBackBase64 = documentBack[0].buffer.toString('base64');
+  console.error('documentBackBase64: ',documentBackBase64);
+
+  const faceBase64 = face[0].buffer.toString('base64');
+  console.error('faceBase64: ',faceBase64);
 
   const data = {
     document: documentBase64,
     documentBack: documentBackBase64,
     face: faceBase64,
+    profile: 'security_high' 
+
 }
-fetch('https://api2.idanalyzer.com/scan', {
+const response= await fetch('https://api2.idanalyzer.com/scan', {
   method: 'POST',
   headers: {
     'Accept': 'application/json',
@@ -114,17 +127,15 @@ fetch('https://api2.idanalyzer.com/scan', {
     'X-API-KEY': apiKey,
   },
   body: JSON.stringify(data),
-})
-.then(response => response.json())
-.then(apiResponse => {
-  console.log(apiResponse);
-  res.send(apiResponse); 
-})
-.catch(error => {
-  console.error(error);
-  res.status(500).send('Internal Server Error'); // Handle API request error
 });
 
+const apiResponse=await response.json();
+console.log(apiResponse);
+res.send(apiResponse);
+}catch(error){
+  console.error('Error processing request: ',error);
+  res.status(500).send('Internal Server Error');
+}
 });
 
 

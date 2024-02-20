@@ -29,7 +29,10 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
       : Camera.Constants.Type.back
   );
 
+
   const handleCapture = async () => {
+
+  try{
     if (cameraRef.current && !loading) {
       let photo = await cameraRef.current.takePictureAsync();
 
@@ -38,7 +41,7 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
       console.log('Photo uri:', photo.uri);
 
       if (!photo || !photo.uri) {
-        console.error('Error capturing photo:', photo);
+        console.error('Error capturing photoooooooooooooo:', photo);
         setError('Error capturing photo. Please try again.');
         return;
       }
@@ -49,21 +52,30 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         type: 'image/jpeg',
         name: 'face.jpg',
       });
-      const documentBlob = await fetch(documentImage.uri)
-      .then((res) => res.blob());
-      formData.append( 'document',  documentBlob,  'document.jpg');
-  
-      const documentBackBlob = await fetch(documentBackImage.uri)
-      .then((res) => res.blob());
+
+0
+      const documentBlob = await fetch(documentImage.uri).then((res) => res.blob());
+      if (!documentBlob) {
+        console.error('Error fetching document image:', documentBlob);
+        setError('Error fetching document image. Please try again.');
+        return;
+      }
+
+      const documentBackBlob =await fetch(documentBackImage.uri).then((res)=>res.blob());
+      if(documentBackBlob){
+        console.error('Error fetching document back image:', documentBlob);
+        setError('Error fetching document back image. Please try again.');
+        return;
+      }
+
+      formData.append('document', documentBlob, 'document.jpg');
       formData.append('documentBack', documentBackBlob, 'documentBack.jpg');
-      
       formData.append('profile', 'security_high');
-  
+      console.log('FormData:', formData);
 
       setLoading(true);
-      try {
-        const apiEndpoint = 'http://192.168.178.69:8083/faceVerification';
-        const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
+      const apiEndpoint = 'http://10.180.42.167:8083/faceVerification';
+      const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -72,7 +84,7 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
             'Content-Type': 'multipart/form-data',
           },
           body: formData,
-          timeout: 10000,
+          timeout: 30000,
         });
 
         const responseBody = await response.text(); 
@@ -91,12 +103,12 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         }else {
           console.log('Its not OK!');
         }
-      } catch (error) {
+      }
+    } catch (error) {
         console.error('Error capturing image:', error);
-        setError('Error capturing image. Please try again.');
+      setError('Error capturing image. Please try again.');
       } finally {
         setLoading(false);
-      }
     }
   };
   return (

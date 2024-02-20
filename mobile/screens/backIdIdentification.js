@@ -51,7 +51,7 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.178.69:8083/processImage';
+        const apiEndpoint = 'http://10.180.42.167:8083/processImage';
         const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
 
         const response = await fetch(apiEndpoint, {
