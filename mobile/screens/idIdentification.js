@@ -52,8 +52,8 @@ const IDIdentificationScreen = ({ navigation  }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://10.180.42.167:8083/processImage';
-        const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
+        const apiEndpoint = 'http://192.168.1.111:8083/processImage';
+        const apiKey = 'WPxA9od6pDm2YH2djximFiN9l9OMZH9C';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {

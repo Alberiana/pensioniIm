@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
+import * as FileSystem from 'expo-file-system';
 
 const FaceCaptureScreen  = ({ navigation, route }) => {
   const { userData, documentImage, documentBackImage } = route.params || {};
@@ -29,6 +30,22 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
       : Camera.Constants.Type.back
   );
 
+  const convertToBase64 = async (uri) => {
+    console.log('URI:', uri);
+    try {
+      if (!uri) {
+        console.error('Invalid URI:', uri);
+        return null;
+      }
+  
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      return `data:image/jpeg;base64,${base64}`;
+    } catch (error) {
+      console.error('Error converting image to base64:', error);
+      return null;
+    }
+  };
+
 
   const handleCapture = async () => {
 
@@ -47,35 +64,57 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
       }
 
       const formData = new FormData();
+      console.log('Before face:', formData);
+
+      const faceBase64 = await convertToBase64(photo.uri);
       formData.append('face', {
-        uri: photo.uri,
+        uri: faceBase64,
         type: 'image/jpeg',
         name: 'face.jpg',
       });
 
-0
-      const documentBlob = await fetch(documentImage.uri).then((res) => res.blob());
-      if (!documentBlob) {
-        console.error('Error fetching document image:', documentBlob);
-        setError('Error fetching document image. Please try again.');
-        return;
-      }
+      // formData.append('face', photo.base64);
+      console.log('Before documentBlob:', formData);
 
-      const documentBackBlob =await fetch(documentBackImage.uri).then((res)=>res.blob());
-      if(documentBackBlob){
-        console.error('Error fetching document back image:', documentBlob);
-        setError('Error fetching document back image. Please try again.');
-        return;
-      }
+      const documentImageBase64 = await convertToBase64(documentImage);
+      formData.append('document', {
+        uri: documentImageBase64,
+        type: 'image/jpeg',
+        name: 'document.jpg',
+      });
 
-      formData.append('document', documentBlob, 'document.jpg');
-      formData.append('documentBack', documentBackBlob, 'documentBack.jpg');
+      console.log('Before documentbackBlob:', formData);
+
+      const documentBackImageBase64 = await convertToBase64(documentBackImage);
+      formData.append('documentBack', {
+        uri: documentBackImageBase64,
+        type: 'image/jpeg',
+        name: 'documentBack.jpg',
+      });
+    
+      // const documentBlob = await fetch(documentImage.uri).then((res) => res.blob());
+      // if (!documentBlob) {
+      //   console.error('Error fetching document image:', documentBlob);
+      //   setError('Error fetching document image. Please try again.');
+      //   return;
+      // }
+
+      // const documentBackBlob =await fetch(documentBackImage.uri).then((res)=>res.blob());
+      // if(documentBackBlob){
+      //   console.error('Error fetching document back image:', documentBlob);
+      //   setError('Error fetching document back image. Please try again.');
+      //   return;
+      // }
+      console.log('FormData:', formData);
+
       formData.append('profile', 'security_high');
+
       console.log('FormData:', formData);
 
       setLoading(true);
-      const apiEndpoint = 'http://10.180.42.167:8083/faceVerification';
-      const apiKey = 'jScatYPNZWFjYsnac3JyDDRe4ncyp1zc';
+      const apiEndpoint = 'http://192.168.1.111:8083/faceVerification';
+      const apiKey = 'WPxA9od6pDm2YH2djximFiN9l9OMZH9C';
+      console.log('AFTER API:', formData);
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -85,6 +124,7 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
           },
           body: formData,
           timeout: 30000,
+
         });
 
         const responseBody = await response.text(); 
@@ -101,7 +141,8 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
               setError('Biometric verification failed. Please try again.');
             }
         }else {
-          console.log('Its not OK!');
+          console.log('Server error:', responseBody);
+          setError('Server error. Please try again.');
         }
       }
     } catch (error) {

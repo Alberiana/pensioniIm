@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 const apiEndpoint = 'https://api2.idanalyzer.com/scan';
 const apiEndpointFace = 'https://api2.idanalyzer.com/face';
 
-const apiKey = 'rfEa3UP1yxmXrf6J90t9wxGVQ4sZy7OK';
+const apiKey = 'vmQkOcA1EJLCyBEC2AOQqD9WTuUb8xI8';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
@@ -23,7 +23,7 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
       throw new Error('No file uploaded');
     }    
     const response = await axios.post(apiEndpoint, {
-      document: file.buffer.toString('base64'), // Assuming document is the key for the document image
+      document: file.buffer.toString('base64'),
     }, {
       headers: {
         'Accept': 'application/json',
@@ -64,79 +64,70 @@ function extractData(data){
 }
 
 
-
 app.post('/faceVerification', upload.fields([
   { name: 'document', maxCount: 1 },
   { name: 'documentBack', maxCount: 1 },
   { name: 'face', maxCount: 1 },
-]),async (req, res) => {
-try{
-  if (!req.files )
-  {  
-    console.error('REQ file missing in the request.');
-    return res.status(400).send('Bad Request: Req file missing.');
+]), async (req, res) => {
+  try {
+    if (!req.files) {
+      console.error('REQ file missing in the request.');
+      return res.status(400).send('Bad Request: Req file missing.');
+    } else if (!req.files['document']) {
+      console.error('DOCUMENT missing in the request.');
+      return res.status(400).send('Bad Request: DOCUMENT missing.');
+    } else if (!req.files['documentBack']) {
+      console.error('documentBack missing in the request.');
+      return res.status(400).send('Bad Request: documentBack missing.');
+    } else if (!req.files['face']) {
+      console.error('face files missing in the request.');
+      return res.status(400).send('Bad Request: face files missing.');
+    }
 
-  }else if(!req.files['document']){
+    const { document, documentBack, face } = req.files;
+    if (!document || !documentBack || !face) {
+      console.error('Required files missing in the request. ');
+      return res.status(400).send('Bad Request: Required files missing. ');
+    }
 
-   console.error('DOCUMENT missing in the request.');
-   return res.status(400).send('Bad Request: DOCUMENT missing.');
 
-  }else if(!req.files['documentBack'] ){
-    console.error('documentBack missing in the request.');
-    return res.status(400).send('Bad Request:documentBack missing.');
-  }else if(!req.files['face']) {
-    console.error('face files missing in the request.');
-    return res.status(400).send('Bad Request: face files missing.');
+    const documentBase64 = document[0].buffer.toString('base64');
+    //console.error('documentBase64: ', documentBase64);
+
+    const documentBackBase64 = documentBack[0].buffer.toString('base64');
+    //console.error('documentBackBase64: ', documentBackBase64);
+
+    const faceBase64 = face[0].buffer.toString('base64');
+   // console.error('faceBase64: ', faceBase64);
+
+    const data = {
+      document: documentBase64,
+      documentBack: documentBackBase64,
+      face: faceBase64,
+      profile: 'security_high'
+    }
+
+    const response = await axios.post('https://api2.idanalyzer.com/scan', data,{
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey,
+      },
+    });
+
+    const apiResponse = await response.data;
+    const formattedData = extractData(apiResponse.data);
+
+    console.log('Original Response data:', apiResponse);
+    console.log('Formatted Response data:', formattedData);
+
+    res.send(formattedData);
+  } catch (error) {
+    console.error('Error processing request: ', error);
+    res.status(500).send('Internal Server Error');
   }
-
-  const{document, documentBack,face}=req.files;
-  if(!document || !documentBack || !face){
-    console.error('Required files missing in the request. ');
-    return res.status(400).send('Bad Request: Required files missing. ');
-  }
-
-
-  // const documentImage = req.files['document'][0];
-  // const documentBackImage = req.files['documentBack'][0];
-  // const faceImage = req.files['face'][0];
-
-  
-  console.error('documentImage: ',documentImage);
-
-  const documentBase64 = document[0].buffer.toString('base64');
-  console.error('documentBase64: ',documentBase64);
-
-  const documentBackBase64 = documentBack[0].buffer.toString('base64');
-  console.error('documentBackBase64: ',documentBackBase64);
-
-  const faceBase64 = face[0].buffer.toString('base64');
-  console.error('faceBase64: ',faceBase64);
-
-  const data = {
-    document: documentBase64,
-    documentBack: documentBackBase64,
-    face: faceBase64,
-    profile: 'security_high' 
-
-}
-const response= await fetch('https://api2.idanalyzer.com/scan', {
-  method: 'POST',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'X-API-KEY': apiKey,
-  },
-  body: JSON.stringify(data),
 });
 
-const apiResponse=await response.json();
-console.log(apiResponse);
-res.send(apiResponse);
-}catch(error){
-  console.error('Error processing request: ',error);
-  res.status(500).send('Internal Server Error');
-}
-});
 
 
 
