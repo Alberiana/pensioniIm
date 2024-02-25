@@ -4,13 +4,17 @@ import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 
 const FaceCaptureScreen  = ({ navigation, route }) => {
-  const { userData, documentImage, documentBackImage } = route.params || {};
+  const { documentImage, documentBackImage } = route.params || {};
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front);
   const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
+  const apiEndpoint = 'http://192.168.195.102:8083/faceVerification';
+  const apiKey = '6tpjn3a7P9MYkGirp9MQj2ZexR7B3eJA';
+  const [userData, setUserData]= useState(null);
+
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -58,13 +62,12 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
       console.log('Photo uri:', photo.uri);
 
       if (!photo || !photo.uri) {
-        console.error('Error capturing photoooooooooooooo:', photo);
+        console.error('Error capturing photo:', photo);
         setError('Error capturing photo. Please try again.');
         return;
       }
 
       const formData = new FormData();
-      console.log('Before face:', formData);
 
       const faceBase64 = await convertToBase64(photo.uri);
       formData.append('face', {
@@ -73,17 +76,12 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         name: 'face.jpg',
       });
 
-      // formData.append('face', photo.base64);
-      console.log('Before documentBlob:', formData);
-
       const documentImageBase64 = await convertToBase64(documentImage);
       formData.append('document', {
         uri: documentImageBase64,
         type: 'image/jpeg',
         name: 'document.jpg',
       });
-
-      console.log('Before documentbackBlob:', formData);
 
       const documentBackImageBase64 = await convertToBase64(documentBackImage);
       formData.append('documentBack', {
@@ -92,57 +90,31 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         name: 'documentBack.jpg',
       });
     
-      // const documentBlob = await fetch(documentImage.uri).then((res) => res.blob());
-      // if (!documentBlob) {
-      //   console.error('Error fetching document image:', documentBlob);
-      //   setError('Error fetching document image. Please try again.');
-      //   return;
-      // }
-
-      // const documentBackBlob =await fetch(documentBackImage.uri).then((res)=>res.blob());
-      // if(documentBackBlob){
-      //   console.error('Error fetching document back image:', documentBlob);
-      //   setError('Error fetching document back image. Please try again.');
-      //   return;
-      // }
-      console.log('FormData:', formData);
-
-      formData.append('profile', 'security_high');
-
-      console.log('FormData:', formData);
-
       setLoading(true);
-      const apiEndpoint = 'http://192.168.1.111:8083/faceVerification';
-      const apiKey = 'WPxA9od6pDm2YH2djximFiN9l9OMZH9C';
-      console.log('AFTER API:', formData);
 
-        const response = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'multipart/form-data',
-          },
-          body: formData,
-          timeout: 30000,
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'multipart/form-data',
+        },          
+        body: formData,
+        timeout: 30000,
 
-        });
+      });
 
         const responseBody = await response.text(); 
+        const { firstName, lastName } = JSON.parse(responseBody);
+
+
         console.log('Response from server face verification:', responseBody);        
           if (response.ok) {
-            const result = JSON.parse(responseBody);
-            console.log('Verification Result:', result);
-
-            if (result.isIdentical) {
-              console.log('Face recognition passed!');
-              setVerificationResult('Biometric verification passed!');
-            } else {
-              console.log('Face recognition failed.');
-              setError('Biometric verification failed. Please try again.');
-            }
-        }else {
-          console.log('Server error:', responseBody);
-          setError('Server error. Please try again.');
+            console.log('Verification Result:', responseBody);
+            navigation.navigate('MainScreen', { firstName, isVerified: true });
+          }else {
+            console.log('Server error:', responseBody);
+            setError('Server error. Please try again.');
+            navigation.navigate('MainScreen', { firstName, isVerified: false });
         }
       }
     } catch (error) {

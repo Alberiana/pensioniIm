@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
 const multer = require('multer');
+const { saveUserData } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 8083;
@@ -13,8 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 const apiEndpoint = 'https://api2.idanalyzer.com/scan';
 const apiEndpointFace = 'https://api2.idanalyzer.com/face';
-
-const apiKey = 'vmQkOcA1EJLCyBEC2AOQqD9WTuUb8xI8';
+const apiKey = 'fmKZtdudJj9zfuKPey7kEIHO8xNguqSB';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
@@ -34,7 +34,7 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
     
     const formattedData = extractData(response.data.data);
 
-    console.log('Original Response data:', response.data);
+    //console.log('Original Response data:', response.data);
    const result={
     ...response.data.result,
     data:formattedData,
@@ -90,15 +90,9 @@ app.post('/faceVerification', upload.fields([
       return res.status(400).send('Bad Request: Required files missing. ');
     }
 
-
     const documentBase64 = document[0].buffer.toString('base64');
-    //console.error('documentBase64: ', documentBase64);
-
     const documentBackBase64 = documentBack[0].buffer.toString('base64');
-    //console.error('documentBackBase64: ', documentBackBase64);
-
     const faceBase64 = face[0].buffer.toString('base64');
-   // console.error('faceBase64: ', faceBase64);
 
     const data = {
       document: documentBase64,
@@ -118,7 +112,7 @@ app.post('/faceVerification', upload.fields([
     const apiResponse = await response.data;
     const formattedData = extractData(apiResponse.data);
 
-    console.log('Original Response data:', apiResponse);
+    //console.log('Original Response data:', apiResponse);
     console.log('Formatted Response data:', formattedData);
 
     res.send(formattedData);
@@ -128,6 +122,24 @@ app.post('/faceVerification', upload.fields([
   }
 });
 
+
+
+
+app.post('/saveUserData', async (req, res) => {
+  const { firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort } = req.body;
+
+  try {
+    const result=await saveUserData(firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort);
+    if (result.success) {
+      res.status(200).send(result.message);
+    } else {
+      res.status(500).send(result.message);
+    } 
+   } catch (error) {
+    console.error('Error saving user data from app.js:', error);
+    res.status(500).send('Error saving user data from app.js');
+  }
+});
 
 
 

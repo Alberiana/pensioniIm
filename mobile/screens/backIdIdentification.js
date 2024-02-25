@@ -10,6 +10,8 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
   const { userData, documentImage } = route.params || {};
+  const apiEndpoint = 'http://192.168.195.102:8083/processImage';
+  const apiKey = '6tpjn3a7P9MYkGirp9MQj2ZexR7B3eJA';
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -51,8 +53,6 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.1.111:8083/processImage';
-        const apiKey = 'WPxA9od6pDm2YH2djximFiN9l9OMZH9C';
 
         const response = await fetch(apiEndpoint, {
           method: 'POST',
@@ -79,16 +79,19 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
           } else {
             console.log('Back of the document recognized successfully!');
             setDocumentRecognized(true);
+            console.log('UserData: ',userData)
           }
-          console.log('Before navigating to FaceCaptureScreen');
           navigation.navigate('FaceCaptureScreen', {
             userData: userData,
             documentImage: documentImage,
             documentBackImage:uri,
           });
-          
-          
-          console.log('After navigating to FaceCaptureScreen');
+
+          console.log('DocumentImage:', documentImage);
+
+          console.log('UserData: ',userData)
+
+
         }
         
         

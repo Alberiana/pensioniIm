@@ -12,6 +12,33 @@ const IDIdentificationScreen = ({ navigation  }) => {
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
 
+
+
+  const saveUserData = async (userData) => {
+    try {
+      const apiEndpoint = 'http://192.168.195.102:8083/saveUserData';
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ data: userData }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('User data saved: ', data);
+      } else {
+        const errorText = await response.text();
+        console.error('Error saving user data: ', errorText);
+      }
+  
+    } catch (error) {
+      console.error('Error saving user data: ', error);
+    }
+  };
+  
+
   useEffect(() => {
     const requestCameraPermission = async () => {
       try {
@@ -52,8 +79,8 @@ const IDIdentificationScreen = ({ navigation  }) => {
 
       setLoading(true);
       try {
-        const apiEndpoint = 'http://192.168.1.111:8083/processImage';
-        const apiKey = 'WPxA9od6pDm2YH2djximFiN9l9OMZH9C';
+        const apiEndpoint = 'http://192.168.195.102:8083/processImage';
+        const apiKey = '6tpjn3a7P9MYkGirp9MQj2ZexR7B3eJA';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
@@ -70,6 +97,27 @@ const IDIdentificationScreen = ({ navigation  }) => {
           const parsedResponse = JSON.parse(responseBody);      
           if (response.ok) {
             console.log('Result:', parsedResponse);
+            await saveUserData(parsedResponse.data.firstName
+              ,parsedResponse.data.firstName
+              ,parsedResponse.data.lastName
+              ,parsedResponse.data.age
+              ,parsedResponse.data.dob
+              ,parsedResponse.data.documentName
+              ,parsedResponse.data.documentNumber
+              ,parsedResponse.data.documentSide
+              ,parsedResponse.data.internalId
+              ,parsedResponse.data.countryFull
+              ,parsedResponse.data.countryIso
+              ,parsedResponse.data.expiry
+              ,parsedResponse.data.daysToExpiry
+              ,null
+              ,parsedResponse.data.optionalData
+              ,null
+              ,parsedResponse.data.sex
+              ,parsedResponse.data.stateFull
+              ,parsedResponse.data.stateShort
+              );
+
           } else {
             console.error('Error response from server:', parsedResponse);
           }
