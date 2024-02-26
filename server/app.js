@@ -126,20 +126,28 @@ app.post('/faceVerification', upload.fields([
 
 
 app.post('/saveUserData', async (req, res) => {
-  const { firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort } = req.body;
+  const { data } = req.body; // Retrieve the userData object from req.body
 
   try {
-    const result=await saveUserData(firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort);
+    console.log('Received request with body:', req.body);
+
+    const { firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort } = req.body;
+
+    const result = await saveUserData(firstName, lastName, age, dob, documentName, documentNumber, documentSide, internalId, countryFull, countryIso, expiry, daysToExpiry, mrz, optionalData, PersonalNo, sex, stateFull, stateShort);
+    
+    console.log('After method:', result);
+
     if (result.success) {
-      res.status(200).send(result.message);
+      res.status(200).json({ message: 'User data saved successfully' });
     } else {
-      res.status(500).send(result.message);
-    } 
-   } catch (error) {
+      res.status(500).json({ message: 'Error saving user data' });
+    }
+  } catch (error) {
     console.error('Error saving user data from app.js:', error);
-    res.status(500).send('Error saving user data from app.js');
+    res.status(500).json({ message: 'Error saving user data' });
   }
 });
+
 
 
 

@@ -16,14 +16,16 @@ const IDIdentificationScreen = ({ navigation  }) => {
 
   const saveUserData = async (userData) => {
     try {
+      console.log('Sendingggggg user data:', userData); // Log the userData object
+
       const apiEndpoint = 'http://192.168.195.102:8083/saveUserData';
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ data: userData }),
-      });
+        body: JSON.stringify(userData ),
+            });
   
       if (response.ok) {
         const data = await response.json();
@@ -37,6 +39,7 @@ const IDIdentificationScreen = ({ navigation  }) => {
       console.error('Error saving user data: ', error);
     }
   };
+  
   
 
   useEffect(() => {
@@ -97,26 +100,43 @@ const IDIdentificationScreen = ({ navigation  }) => {
           const parsedResponse = JSON.parse(responseBody);      
           if (response.ok) {
             console.log('Result:', parsedResponse);
-            await saveUserData(parsedResponse.data.firstName
-              ,parsedResponse.data.firstName
-              ,parsedResponse.data.lastName
-              ,parsedResponse.data.age
-              ,parsedResponse.data.dob
-              ,parsedResponse.data.documentName
-              ,parsedResponse.data.documentNumber
-              ,parsedResponse.data.documentSide
-              ,parsedResponse.data.internalId
-              ,parsedResponse.data.countryFull
-              ,parsedResponse.data.countryIso
-              ,parsedResponse.data.expiry
-              ,parsedResponse.data.daysToExpiry
-              ,null
-              ,parsedResponse.data.optionalData
-              ,null
-              ,parsedResponse.data.sex
-              ,parsedResponse.data.stateFull
-              ,parsedResponse.data.stateShort
-              );
+            console.log('Result:', parsedResponse.data.firstName);
+            console.log('Result:', parsedResponse.data.lastName);
+            console.log('Result:', parsedResponse.data.age);
+            console.log('Result:', parsedResponse.data.documentName);
+            console.log('Result:', parsedResponse.data.documentNumber);
+            console.log('Result:', parsedResponse.data.documentSide);
+            console.log('Result:', parsedResponse.data.internalId);
+            console.log('Result:', parsedResponse.data.countryFull);
+            console.log('Result:', parsedResponse.data.countryIso);
+            console.log('Result:', parsedResponse.data.expiry);
+            console.log('Result:', parsedResponse.data.daysToExpiry);
+            console.log('Result:', parsedResponse.data.optionalData);
+            console.log('Result:', parsedResponse.data.sex);
+            console.log('Result:', parsedResponse.data.stateFull);
+            console.log('Result:', parsedResponse.data.stateShort);
+
+            const userData = {
+              firstName: parsedResponse.data.firstName || '',
+              lastName: parsedResponse.data.lastName || '',
+              age: parsedResponse.data.age || '',
+              dob: parsedResponse.data.dob || '',
+              documentName: parsedResponse.data.documentName || '',
+              documentNumber: parsedResponse.data.documentNumber || '',
+              documentSide: parsedResponse.data.documentSide || '',
+              internalId: parsedResponse.data.internalId || '',
+              countryFull: parsedResponse.data.countryFull || '',
+              countryIso: parsedResponse.data.countryIso || '',
+              expiry: parsedResponse.data.expiry || '',
+              daysToExpiry: parsedResponse.data.daysToExpiry || '',
+              optionalData: parsedResponse.data.optionalData || '',
+              sex: parsedResponse.data.sex || '',
+              stateFull: parsedResponse.data.stateFull || '',
+              stateShort: parsedResponse.data.stateShort || '',
+            };
+  
+            console.log('Sending user data:', userData);
+            await saveUserData(userData);
 
           } else {
             console.error('Error response from server:', parsedResponse);
