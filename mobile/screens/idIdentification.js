@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
 
-const IDIdentificationScreen = ({ navigation  }) => {
+const IDIdentificationScreen = ({ navigation }) => {
   const [cameraPermission, setCameraPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const cameraRef = useRef(null);
@@ -11,8 +11,6 @@ const IDIdentificationScreen = ({ navigation  }) => {
   const [userData, setUserData] = useState(null);
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
-
-
 
   const saveUserData = async (userData) => {
     try {
@@ -24,9 +22,9 @@ const IDIdentificationScreen = ({ navigation  }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData ),
-            });
-  
+        body: JSON.stringify(userData),
+      });
+
       if (response.ok) {
         const data = await response.json();
         console.log('User data saved: ', data);
@@ -34,13 +32,10 @@ const IDIdentificationScreen = ({ navigation  }) => {
         const errorText = await response.text();
         console.error('Error saving user data: ', errorText);
       }
-  
     } catch (error) {
       console.error('Error saving user data: ', error);
     }
   };
-  
-  
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -83,13 +78,13 @@ const IDIdentificationScreen = ({ navigation  }) => {
       setLoading(true);
       try {
         const apiEndpoint = 'http://192.168.195.102:8083/processImage';
-        const apiKey = '6tpjn3a7P9MYkGirp9MQj2ZexR7B3eJA';
+        const apiKey = '9l9f88TBXNAHXRIN9WRzwKDvRcm1K18J';
         const response = await fetch(apiEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'multipart/form-data',
             'X-API-KEY': apiKey,
-          },          
+          },
           body: formData,
           timeout: 10000,
         });
@@ -97,7 +92,7 @@ const IDIdentificationScreen = ({ navigation  }) => {
         const responseBody = await response.text();
 
         try {
-          const parsedResponse = JSON.parse(responseBody);      
+          const parsedResponse = JSON.parse(responseBody);
           if (response.ok) {
             console.log('Result:', parsedResponse);
             console.log('Result:', parsedResponse.data.firstName);
@@ -134,10 +129,9 @@ const IDIdentificationScreen = ({ navigation  }) => {
               stateFull: parsedResponse.data.stateFull || '',
               stateShort: parsedResponse.data.stateShort || '',
             };
-  
+
             console.log('Sending user data:', userData);
             await saveUserData(userData);
-
           } else {
             console.error('Error response from server:', parsedResponse);
           }
@@ -149,10 +143,9 @@ const IDIdentificationScreen = ({ navigation  }) => {
           userData: userData,
           documentImage: uri,
         });
-
       } catch (error) {
         console.error('Error capturing image:', error);
-        setError(`Error capturing image: ${error.message}`);      
+        setError(`Error capturing image: ${error.message}`);
       } finally {
         setLoading(false);
       }
@@ -164,26 +157,26 @@ const IDIdentificationScreen = ({ navigation  }) => {
   };
 
   return (
-    <View>
-      {documentRecognized ? (
-        <View>
-          <Text>{`Welcome, ${userData.firstName} ${userData.lastName}! Registration successful.`}</Text>
-          <Button title="Go to Back ID Scanner" onPress={back} />
-        </View>
+    <View style={{ flex: 1 }}>
+      {cameraPermission === null ? (
+        <Text>Requesting camera permission...</Text>
+      ) : cameraPermission === false ? (
+        <Text>No access to camera</Text>
       ) : (
-        <View>
+        <View style={{ flex: 1 }}>
           <Camera
             ref={cameraRef}
-            style={{ width: '100%', height: '80%' }}
+            style={{ flex: 1 }}
             type={type}
-            ratio="20:9"
+            ratio="16:9"
             autoFocus="on"
+          />
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleCapture}
           >
-          </Camera>
-
-          {error && <Text style={{ color: 'red' }}>{error}</Text>}
-
-          <Button title="Capture" onPress={handleCapture} />
+            <Text style={styles.buttonText}>FOTOGRAFO LETERNJOFTIMIN</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -206,11 +199,15 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#1E0808',
     padding: 10,
     marginHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   text: {
     color: 'white',

@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 const apiEndpoint = 'https://api2.idanalyzer.com/scan';
 const apiEndpointFace = 'https://api2.idanalyzer.com/face';
-const apiKey = 'fmKZtdudJj9zfuKPey7kEIHO8xNguqSB';
+const apiKey = 'MqgU23w7vpE6wXRvlVlIBxEu83ZPTaTi';
 
 app.post('/processImage', upload.single('image'), async (req, res) => {
   try {
@@ -33,8 +33,6 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
     });
     
     const formattedData = extractData(response.data.data);
-
-    //console.log('Original Response data:', response.data);
    const result={
     ...response.data.result,
     data:formattedData,
@@ -108,12 +106,19 @@ app.post('/faceVerification', upload.fields([
         'X-API-KEY': apiKey,
       },
     });
+    const apiRespons= await response.data;
+    console.log('apiResponsedata:', apiRespons);
 
     const apiResponse = await response.data;
     const formattedData = extractData(apiResponse.data);
 
-    //console.log('Original Response data:', apiResponse);
+
+    const apiResponseeeeee = await response.data;
+
+    const formattedDataaaaa = extractData(apiResponseeeeee.warning);
+
     console.log('Formatted Response data:', formattedData);
+    console.log('Formattedddddddddddddd Response data:', formattedDataaaaa);
 
     res.send(formattedData);
   } catch (error) {

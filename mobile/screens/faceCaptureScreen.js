@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet,TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 
@@ -12,7 +12,7 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
   const [documentRecognized, setDocumentRecognized] = useState(false);
   const [error, setError] = useState(null);
   const apiEndpoint = 'http://192.168.195.102:8083/faceVerification';
-  const apiKey = '6tpjn3a7P9MYkGirp9MQj2ZexR7B3eJA';
+  const apiKey = '9l9f88TBXNAHXRIN9WRzwKDvRcm1K18J';
   const [userData, setUserData]= useState(null);
 
 
@@ -89,7 +89,8 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         type: 'image/jpeg',
         name: 'documentBack.jpg',
       });
-    
+      formData.append('profile', 'security_high');
+
       setLoading(true);
 
       const response = await fetch(apiEndpoint, {
@@ -139,16 +140,27 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
             ratio="16:9"
             autoFocus="on"
           />
-          <View style={styles.buttonContainer}>
-            <Button title="Capture" onPress={handleCapture} />
-          </View>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={handleCapture}
+          >
+            <Text style={styles.buttonText}>FOTOGRAFO FYTYREN</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
-  );  
+  );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  camera: {
+    width: '100%',
+    height: '80%',
+  },
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
@@ -156,6 +168,23 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
+    backgroundColor: '#1E0808',
+    padding: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  text: {
+    color: 'white',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 function LoginScreen({ navigation }) {
   const [idCard, setIdCard] = useState('');
@@ -14,12 +14,6 @@ function LoginScreen({ navigation }) {
         body: JSON.stringify({ idCard }), 
       });
 
-      // if (response.ok) {
-      //   alert('Helloo'+ response); 
-      //   navigation.navigate('IDIdentification'); 
-      // } else {
-      //   alert('ID card number is incorrect or not found in the database.'); 
-      // }
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred. Please try again.'); 
@@ -31,15 +25,21 @@ function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text>Sheno numrin e leternjoftimit:</Text>
-      <TextInput
+      <Text style={styles.title}>Sheno numrin e leternjoftimit:</Text>
+      <TextInput 
+       style={styles.input} 
         placeholder="Numri leternjoftimit"
         onChangeText={text => setIdCard(text)}
         value={idCard}
       />
-      <Button title="Vazhdo" onPress={checkCredentials} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={checkCredentials}
+      >
+        <Text style={styles.buttonText}>Vazhdo</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleSignUp}>
-        <Text style={styles.signUpText}>Nuk jeni i/e regjistruar? Regjistrohu</Text>
+        <Text style={styles.signUpText}>Nuk jeni i/e regjistruar? Regjistrohu(Kliko ketu)</Text>
       </TouchableOpacity>
     </View>
   );
@@ -50,12 +50,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: 'lightblue',
+    padding: 20, 
+    backgroundColor: 'gray', // Set background color to gray
+  }, 
+  input: {
+    fontSize: 18, // Set font size to 18
+    width: '80%', // Set width to 80% of parent
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+  },
+  title: {
+    fontSize: 20, // Set font size to 20
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#1E0808', // Set button background color to #1E0808
+    borderRadius: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 20,
   },
   signUpText: {
     marginVertical: 20,
-    color: 'blue',
+    color: '#FFFFFF',
   },
 });
 
