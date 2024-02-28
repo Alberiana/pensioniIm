@@ -95,21 +95,21 @@ const IDIdentificationScreen = ({ navigation }) => {
           const parsedResponse = JSON.parse(responseBody);
           if (response.ok) {
             console.log('Result:', parsedResponse);
-            console.log('Result:', parsedResponse.data.firstName);
-            console.log('Result:', parsedResponse.data.lastName);
-            console.log('Result:', parsedResponse.data.age);
-            console.log('Result:', parsedResponse.data.documentName);
-            console.log('Result:', parsedResponse.data.documentNumber);
-            console.log('Result:', parsedResponse.data.documentSide);
-            console.log('Result:', parsedResponse.data.internalId);
-            console.log('Result:', parsedResponse.data.countryFull);
-            console.log('Result:', parsedResponse.data.countryIso);
-            console.log('Result:', parsedResponse.data.expiry);
-            console.log('Result:', parsedResponse.data.daysToExpiry);
-            console.log('Result:', parsedResponse.data.optionalData);
-            console.log('Result:', parsedResponse.data.sex);
-            console.log('Result:', parsedResponse.data.stateFull);
-            console.log('Result:', parsedResponse.data.stateShort);
+            console.log('firstName:', parsedResponse.data.firstName);
+            console.log('lastName:', parsedResponse.data.lastName);
+            console.log('age:', parsedResponse.data.age);
+            console.log('documentName:', parsedResponse.data.documentName);
+            console.log('documentNumber:', parsedResponse.data.documentNumber);
+            console.log('documentSide:', parsedResponse.data.documentSide);
+            console.log('internalId:', parsedResponse.data.internalId);
+            console.log('countryFull:', parsedResponse.data.countryFull);
+            console.log('countryIso:', parsedResponse.data.countryIso);
+            console.log('expiry:', parsedResponse.data.expiry);
+            console.log('daysToExpiry:', parsedResponse.data.daysToExpiry);
+            console.log('optionalData:', parsedResponse.data.optionalData);
+            console.log('sex:', parsedResponse.data.sex);
+            console.log('stateFull:', parsedResponse.data.stateFull);
+            console.log('stateShort:', parsedResponse.data.stateShort);
 
             const userData = {
               firstName: parsedResponse.data.firstName || '',
@@ -175,7 +175,7 @@ const IDIdentificationScreen = ({ navigation }) => {
             style={styles.buttonContainer}
             onPress={handleCapture}
           >
-            <Text style={styles.buttonText}>FOTOGRAFO LETERNJOFTIMIN</Text>
+            <Text style={styles.buttonText}>FOTOGRAFO LETERNJOFTIMIN PARA</Text>
           </TouchableOpacity>
         </View>
       )}

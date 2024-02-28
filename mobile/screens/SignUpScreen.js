@@ -17,7 +17,7 @@ function SignUpScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={navigateToFaceIDScreen}>
-        <Text style={styles.buttonText}>Skano leternjoftimin</Text>
+        <Text style={styles.buttonText}>Fotografo leternjoftimin</Text>
       </TouchableOpacity>
     </View>
   );

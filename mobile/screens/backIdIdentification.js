@@ -64,7 +64,7 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
           timeout: 10000,
         });
 
-        const responseBody = await response.text(); // Store the response text
+        const responseBody = await response.text(); 
 
         console.log('Response from server back id:', responseBody);
         if (response.ok) {
@@ -86,16 +86,9 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
             documentImage: documentImage,
             documentBackImage:uri,
           });
-
           console.log('DocumentImage:', documentImage);
-
           console.log('UserData: ',userData)
-
-
         }
-        
-        
-
       } catch (error) {
         console.error('Error capturing image:', error);
         setError('Error capturing image. Please try again.');
@@ -124,7 +117,7 @@ const BackIDCaptureScreen = ({ navigation, route, setUserData }) => {
             style={styles.buttonContainer}
             onPress={handleCapture}
           >
-            <Text style={styles.buttonText}>FOTOGRAFO LETERNJOFTIMIN</Text>
+            <Text style={styles.buttonText}>FOTOGRAFO LETERNJOFTIMIN PRAPA</Text>
           </TouchableOpacity>
         </View>
       )}

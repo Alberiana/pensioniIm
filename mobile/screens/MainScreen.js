@@ -4,7 +4,11 @@ import { View, Text } from 'react-native';
 const MainScreen = ({ route }) => {
   const { firstName, isVerified } = route.params;
   console.log('First Name:', firstName);
-  const firstNames = firstName.map((name) => name.value).join(', ');
+
+let firstNames = '';
+if (Array.isArray(firstName) && firstName.length > 0) {
+  firstNames = firstName[0].value;
+}
 
   return (
     <View>

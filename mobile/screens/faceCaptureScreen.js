@@ -89,7 +89,8 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
         type: 'image/jpeg',
         name: 'documentBack.jpg',
       });
-      formData.append('profile', 'security_high');
+      formData.append('profile', 'security_medium');
+      formData.append('profileId', 'security_medium');
 
       setLoading(true);
 
@@ -106,8 +107,6 @@ const FaceCaptureScreen  = ({ navigation, route }) => {
 
         const responseBody = await response.text(); 
         const { firstName, lastName } = JSON.parse(responseBody);
-
-
         console.log('Response from server face verification:', responseBody);        
           if (response.ok) {
             console.log('Verification Result:', responseBody);

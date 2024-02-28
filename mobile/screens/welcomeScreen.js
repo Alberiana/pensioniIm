@@ -1,18 +1,17 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet,Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Mirë se erdhët në aplikacionin përmes te cilit mund të verifikoheni për të marrë pensionin tuaj!!</Text>
+      <Text style={styles.text}>Mirë se erdhët në aplikacionin përmes te cilit mund të verifikoheni për të marrë pensionin tuajjj!!</Text>
       <Image style={styles.image} source={require('../images/getMoney.jpg' )} />
-      <View style={[styles.buttonContainer, { backgroundColor: '#1E0808' }]}>
-         <Button
-         title="Vazhdo"
-         onPress={() => navigation.navigate('Terms')}
-         color="#0E0909" // Set text color for the button
-  />
-</View>
+      <TouchableOpacity
+        style={styles.buttonContainer}
+        onPress={() => navigation.navigate('Terms')}
+      >
+        <Text style={styles.buttonText}>Vazhdo</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -22,30 +21,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20, 
-    backgroundColor:'gray'
+    padding: 20,
+    backgroundColor: 'gray'
   },
-  text:{
-    fontSize:25
-  },
-  button:{
-    backgroundColor:'#1E0808',
+  text: {
+    fontSize: 25
   },
   buttonContainer: {
-    position: 'absolute',
-    bottom: 10, 
-    left: 0,
-    right: 0,
-    backgroundColor:'#1E0808',
-    marginLeft:23,
-    marginRight:23,
-    marginBottom:53,
-    borderRadius:20,
+    backgroundColor: '#1E0808',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginTop: 20
   },
-  image:{
-    width: 200, 
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18
+  },
+  image: {
+    width: 200,
     height: 200,
-    marginVertical: 10, 
+    marginVertical: 10,
   },
 });
 

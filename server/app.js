@@ -107,7 +107,7 @@ app.post('/faceVerification', upload.fields([
       },
     });
     const apiRespons= await response.data;
-    console.log('apiResponsedata:', apiRespons);
+    console.log('apiResponsedata:', apiRespons.data.data);
 
     const apiResponse = await response.data;
     const formattedData = extractData(apiResponse.data);

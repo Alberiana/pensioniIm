@@ -10,14 +10,14 @@ function TermsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text>Termat dhe Kushtet</Text>
-      <Text>{'Te dhenat tuaja do te perdoren per perdorim te brendshem.'}</Text>
+      <Text style={styles.title}>Termat dhe Kushtet</Text>
+      <Text style={styles.text}>{'Te dhenat tuaja do te perdoren per perdorim te brendshem.'}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Switch
           value={isAccepted}
           onValueChange={handleAcceptance}
         />
-        <Text>Une i pranoj Termat dhe Kushtet</Text>
+        <Text style={styles.text}>Une i pranoj Termat dhe Kushtet</Text>
       </View>
       <TouchableOpacity
         style={styles.buttonContainer}
@@ -42,6 +42,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: 'gray',
+  },
+  title: {
+    fontSize: 30,
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 18,
+    marginBottom: 10,
   },
   buttonContainer: {
     marginTop: 20,
