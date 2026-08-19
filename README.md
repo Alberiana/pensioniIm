@@ -1,121 +1,98 @@
 # Face Liveness & Identity Verification
 
-A mobile identity-verification application developed using React Native and Expo, with additional native Android development using Kotlin and Jetpack Compose.
+A mobile identity-verification application built with **React Native, Expo and JavaScript**.
 
-The project explores mobile identity verification workflows, camera integration, biometric functionality, asynchronous processing, and integration with third-party verification SDKs.
+The application provides a verification flow that guides users through registration, login, identity-document capture and face capture.
 
-## 🚀 Technologies
+## Technologies
 
 * React Native
 * Expo
-* TypeScript
+* JavaScript
 * React Navigation
-* Kotlin
-* Jetpack Compose
-* Android
-* SQLite
-* Camera and image-processing libraries
+* Expo Camera
+* React Native Vision Camera
+* React Native Image Picker
 * Biometric authentication
-* Identity-verification SDKs
+* Identity verification SDKs
+* SQLite
 
-## 📱 Project Overview
+## Features
 
-The project was developed as an exploration of mobile identity verification and face verification workflows.
-
-The application combines cross-platform React Native/Expo development with native Android technologies and third-party SDK integrations.
-
-## ✨ Main Features
-
-* Identity verification workflow
-* Face/liveness verification
+* User registration and login
+* Welcome and terms screens
+* Identity document capture
+* Front and back ID capture
+* Face capture
+* Identity verification flow
 * Camera integration
-* Image capture and processing
 * Biometric functionality
-* Navigation between verification screens
-* Asynchronous verification operations
-* Local data handling
+* Navigation between verification steps
+* Local data storage
 
-## 🏗️ Architecture
+## Application Flow
 
-The project contains both cross-platform mobile code and native Android components.
+The main application flow is organized into separate screens:
 
-The React Native application uses:
+`Welcome → Terms → Login / Sign Up → ID Verification → Back ID Capture → Face Capture → Main Screen`
 
-* TypeScript for application logic
-* React Navigation for navigation
-* Expo and React Native modules for mobile functionality
-* Native integrations where platform-specific functionality is required
+The application uses React Navigation to manage the screen flow.
 
-The Android side uses Kotlin and native Android components.
+## Project Structure
 
-## 🔧 Setup
+```text
+mobile/
+├── screens/
+│   ├── welcomeScreen.js
+│   ├── termsScreen.js
+│   ├── loginScreen.js
+│   ├── SignUpScreen.js
+│   ├── idIdentification.js
+│   ├── backIdIdentification.js
+│   ├── faceCaptureScreen.js
+│   └── MainScreen.js
+├── App.js
+├── app.json
+└── package.json
+```
+
+The project contains dedicated screens for ID and face capture, rather than putting the complete verification flow into a single component.
+
+## Getting Started
 
 ### Prerequisites
 
 * Node.js
-* Yarn or npm
-* Android Studio
-* Android SDK
+* npm or Yarn
 * Expo development environment
+* Android Studio for Android development
 
 ### Installation
-
-Clone the repository:
 
 ```bash
 git clone https://github.com/Alberiana/pensioniIm.git
 cd pensioniIm/mobile
+npm install
 ```
 
-Install dependencies:
+Start the Expo development server:
 
 ```bash
-yarn install
+npm start
 ```
 
-Start the Expo development environment:
+Run on Android:
 
 ```bash
-yarn start
+npm run android
 ```
 
-For Android:
+Run on iOS:
 
 ```bash
-yarn android
+npm run ios
 ```
 
-For iOS:
+## Purpose
 
-```bash
-yarn ios
-```
-
-For web:
-
-```bash
-yarn web
-```
-
-## 📚 What I Learned
-
-This project gave me practical experience working across different mobile development approaches, starting with native Android development and later working with React Native and Expo.
-
-Key areas of experience include:
-
-* Cross-platform mobile development
-* TypeScript and React
-* Native Android development with Kotlin
-* Camera and biometric integrations
-* Third-party SDK integration
-* Asynchronous application workflows
-* Mobile application architecture
-* Debugging native and cross-platform issues
-
-## 👩‍💻 Author
-
-**Alberiana Tofaj**
-
-Computer Engineering — University of Prishtina
-
-GitHub: https://github.com/Alberiana
+This project was created to gain practical experience in **React Native, Expo and mobile application development**, while implementing a real-world identity-verification workflow involving document and face capture.
